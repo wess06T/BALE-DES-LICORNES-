@@ -542,11 +542,11 @@ function render(){
  }
  if(S.askpw){document.body.classList.add("anon");$("#nav").innerHTML="";$("#app").innerHTML=vNewPw();save();return;}
  if(S.tutoOpen){document.body.classList.add("anon");$("#nav").innerHTML="";$("#app").innerHTML=vTuto();save();return;}
- const et=eff().type,recOk=["orga","dj","regie"].includes(et);
+ const et=eff().type,recOk=["dj","regie"].includes(et)||canView(eff());
  const nav=[["home","🏠","Accueil"],["show","🎬","Tableau"],["avant","🗓","Soirée"],["menu","☰","Menu"]];
  const ALLOW=["home","show","avant","set"];
  if(recOk)ALLOW.push("rec");
- if(et==="orga")ALLOW.push("tab","esc","cot","rad");else if(et==="squire")ALLOW.push("cot");
+ if(canView(eff()))ALLOW.push("tab","esc","cot","rad");else if(et==="squire")ALLOW.push("cot");
  if(![...ALLOW,...(canView(S.role)?["bo"]:[])].includes(S.tab))S.tab="home";
  $("#nav").innerHTML=nav.map(x=>`<button class="${(x[0]==="menu"?S.menu:S.tab===x[0])?"on":""}" data-a="${x[0]==="menu"?"menu":"tab:"+x[0]}"><b>${x[1]}</b>${x[2]}</button>`).join("");
  const m={avant:vAvant,script:vScript,show:vShow,tab:vTab,esc:vEsc,cot:vCot,rad:vRad,set:vSet,bo:vBO,rec:vRecap,home:vHome};
@@ -633,7 +633,7 @@ function vScript(){
 const RGRP=[["Écuyers dégagement","cl"],["Escortes","es"],["Artistes","ar"],["DJ","dj"],["Régie","rg"],["Médias","md"]];
 const grpOf=(r,t)=>{if(r.type==="squire"){const q=sqRole(r.name,t.n);return slotKind(q)==="E"?"es":"cl";}return ({artist:"ar",dj:"dj",regie:"rg",photo:"md",tiktok:"md",videast:"md",team:"md"})[r.type]||"";};
 function vShow(){
- const n=S.cur,t=tb(n),role=eff(),c=ctx(role,t),live=role.type==="orga",wess=live&&role.name==="Wess",p=prog(n),g=grpOf(role,t);
+ const n=S.cur,t=tb(n),role=eff(),c=ctx(role,t),live=canView(role),wess=live&&role.name==="Wess",p=prog(n),g=grpOf(role,t);
  const cp=(S.cp&&S.cp[n])||0,got=S.ok[n]||{};
  const pills=`<div class="pills">${T.map(x=>`<button class="pill ${x.n===n?"cur":""} ${prog(x.n).d?"done":""}" data-a="pick:${x.n}">${prog(x.n).d?"✓":x.n}</button>`).join("")}</div>`;
  let h=pills+`<div class="card hd ${t.th==="strass"?"":t.th}"><h2>TABLEAU ${n} · ${t.h}</h2><p>${t.da}</p></div>`;
@@ -711,7 +711,7 @@ function need(t){const o={};t.pos.forEach(p=>o[p.b[1]]=(o[p.b[1]]||0)+p.b[0]);re
 function vCot(){
  const tot={argent:0,rose:0,rainbow:0};T.forEach(t=>{const o=need(t);for(const k in o)tot[k]+=o[k];});
  const nm={argent:"Argent",rose:"Rose",rainbow:"Multicolor"};
- return `<h2>Cotillons</h2><div class="card">`+Object.keys(tot).map(k=>{const st=STOCK[k].reduce((a,x)=>a+x[1],0);return `<div class="row"><span><b>${nm[k]}</b> : besoin ${tot[k]} / stock ${st}</span><b class="${st<tot[k]?"warn":""}" style="color:${st<tot[k]?"":"var(--ok)"}">${st>=tot[k]?"OK":"MANQUE "+(tot[k]-st)}</b></div><div style="color:var(--mut);font-size:12px">${STOCK[k].map(x=>`${x[0]} : ${x[1]}`).join(" · ")}</div>`;}).join("")+`<p style="color:var(--mut);font-size:13px">Argent : seulement 24 en 60 cm, il faut donc piocher dans les 80 cm, serpents et étoiles. Guirlande/serpentin 40 cm : 1 en stock, non prévu.</p></div><h3>Qui prend quoi, par tableau</h3><p style="color:var(--mut);font-size:13px">Cotillons sur tous les podiums (1 à 4, plus 5 au tableau 8). Portés et tirés par les écuyers de dégagement : équipe podium 1 → podiums 1 et 3, équipe podium 2 → podiums 2 et 4, équipe podium 5 → podium 5. Case cochée = préparés.</p>`+T.map(t=>{const cr=carry(t.n);const mine=eff().type==="squire"?sqRole(eff().name,t.n):null;return `<div class="card"><label class="row" style="border:0"><b>T${t.n} · ${t.h} · ${TH[t.th]} · ${Object.values(cr).flat().length} cotillons</b><input type="checkbox" data-chk="cot:${t.n}" ${S.cot[t.n]?"checked":""}></label>${t.pos.map(p=>{const who=Object.keys(cr).filter(q=>cr[q].some(x=>x.pod===p.p)).map(q=>ga(t.n,q));return `<div class="row"><span><b>Podium ${p.p}</b></span><span style="text-align:right">${bs(p.b)} · ${who.join(", ")}</span></div>`;}).join("")}<div style="color:var(--mut);font-size:12px;margin-top:6px">Par écuyer</div>${Object.keys(cr).map(s=>`<div class="row" style="${s===mine?"background:#2a2a14":""}"><span><b>${ga(t.n,s)}</b> <span style="color:var(--mut)">(${slotLabel(s)})</span></span><span style="text-align:right">${cr[s].length} · ${cg(cr[s])}</span></div>`).join("")}</div>`;}).join("")+`<p style="color:var(--mut);font-size:13px">4 étoiles argent 40 cm restent en réserve.</p>`;
+ return `<h2>Cotillons</h2><div class="card">`+Object.keys(tot).map(k=>{const st=STOCK[k].reduce((a,x)=>a+x[1],0);return `<div class="row"><span><b>${nm[k]}</b> : besoin ${tot[k]} / stock ${st}</span><b class="${st<tot[k]?"warn":""}" style="color:${st<tot[k]?"":"var(--ok)"}">${st>=tot[k]?"OK":"MANQUE "+(tot[k]-st)}</b></div><div style="color:var(--mut);font-size:12px">${STOCK[k].map(x=>`${x[0]} : ${x[1]}`).join(" · ")}</div>`;}).join("")+`<p style="color:var(--mut);font-size:13px">Argent : seulement 24 en 60 cm, il faut donc piocher dans les 80 cm, serpents et étoiles. Guirlande/serpentin 40 cm : 1 en stock, non prévu.</p></div><h3>Qui prend quoi, par tableau</h3><p style="color:var(--mut);font-size:13px">Cotillons sur tous les podiums (1 à 4, plus 5 au tableau 8). Portés et tirés par les écuyers de dégagement : équipe podium 1 → podiums 1 et 3, équipe podium 2 → podiums 2 et 4, équipe podium 5 → podium 5. Case cochée = préparés.</p>`+T.map(t=>{const cr=carry(t.n);const mine=eff().type==="squire"?sqRole(eff().name,t.n):null;return `<div class="card"><label class="row" style="border:0"><b>T${t.n} · ${t.h} · ${TH[t.th]} · ${Object.values(cr).flat().length} cotillons</b><input type="checkbox" data-chk="cot:${t.n}" ${CE()} ${S.cot[t.n]?"checked":""}></label>${t.pos.map(p=>{const who=Object.keys(cr).filter(q=>cr[q].some(x=>x.pod===p.p)).map(q=>ga(t.n,q));return `<div class="row"><span><b>Podium ${p.p}</b></span><span style="text-align:right">${bs(p.b)} · ${who.join(", ")}</span></div>`;}).join("")}<div style="color:var(--mut);font-size:12px;margin-top:6px">Par écuyer</div>${Object.keys(cr).map(s=>`<div class="row" style="${s===mine?"background:#2a2a14":""}"><span><b>${ga(t.n,s)}</b> <span style="color:var(--mut)">(${slotLabel(s)})</span></span><span style="text-align:right">${cr[s].length} · ${cg(cr[s])}</span></div>`).join("")}</div>`;}).join("")+`<p style="color:var(--mut);font-size:13px">4 étoiles argent 40 cm restent en réserve.</p>`;
 }
 
 function vRad(){
@@ -973,8 +973,8 @@ function boGen0(){
 const TILESUB={tuto:"Comment utiliser l'appli",show:"Le déroulé du tableau",avant:"Infos, rôle, mots du talkie",rec:"Tous les postes d'un coup d'œil",tab:"Données des tableaux",esc:"Affectations des écuyers",cot:"Qui porte quoi",rad:"Appels et test radio",bo:"Modifier et publier",set:"Version et infos"};
 function menuItems(){
  const et=eff().type,L=[["home","🏠","Accueil"],["show","🎬","Tableau"],["avant","🗓","Soirée"]];
- if(["orga","dj","regie"].includes(et))L.push(["rec","🗂","Récap"]);
- if(et==="orga")L.push(["tab","📋","Fiches"],["esc","🐴","Écuyers"],["cot","🎉","Cotillons"],["rad","📻","Radio"]);else if(et==="squire")L.push(["cot","🎉","Cotillons"]);
+ if(["dj","regie"].includes(et)||canView(eff()))L.push(["rec","🗂","Récap"]);
+ if(canView(eff()))L.push(["tab","📋","Fiches"],["esc","🐴","Écuyers"],["cot","🎉","Cotillons"],["rad","📻","Radio"]);else if(et==="squire")L.push(["cot","🎉","Cotillons"]);
  if(canView(S.role))L.push(["bo","🛠","Back office"]);
  L.push(["tuto","❓","Tuto"],["set","⚙","Réglages"]);return L;}
 function drawer(){
