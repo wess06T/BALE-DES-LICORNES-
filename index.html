@@ -794,6 +794,10 @@ document.addEventListener("click",async e=>{
  else if(a==="ghtest"&&canView(S.role)){try{const g=await ghApi("GET");toast(g.status===200?"Connexion OK : tu peux publier.":g.status===404?"Dépôt trouvé, config.json absent.":g.status===401||g.status===403?"Jeton refusé (droits Contents : Read and write).":"GitHub "+g.status);}catch(e){toast("Échec : "+e.message);}}
  else if(a==="ghdel"&&canView(S.role)){const o=ghRead();try{localStorage.setItem(GHK,JSON.stringify({owner:o.owner,repo:o.repo,tok:""}));}catch(e){}EDITOR=false;toast("Jeton retiré.");}
  else if(a==="bpwreset"&&canView(S.role)){if(DELC==="pwall"){DELC=null;const me=S.role.type+"|"+S.role.name;for(const r of ROLES.flatMap(g=>g[1])){const k=r.type+"|"+r.name;if(k!==me)await setPw(k,genPw());}toast("Tous les mots de passe sont régénérés. Publie pour les appliquer.");}else{DELC="pwall";toast("Appuie encore pour tout régénérer (sauf le tien).");setTimeout(()=>{if(DELC==="pwall"){DELC=null;render();}},4000);}}
+ else if(a==="pkset"&&canView(S.role)){const c=($("#pk_c").value||"").trim();if(c.length<8){toast("Code trop court : 8 caractères minimum.");}else if(!getTok()){toast("Jeton manquant.");}else{try{toast("Chiffrement en cours…");const o=await pkEnc(c,getTok());const g=await ghApi("GET",null,"pk.json");let sha;if(g.status===200)sha=(await g.json()).sha;
+   const p=await ghApi("PUT",{message:"Code organisateur",content:b64(JSON.stringify(o)),sha},"pk.json");toast(p.ok?"Code activé. Donne-le à Jeff et Nico.":"Échec GitHub "+p.status);}catch(e){toast("Échec : "+e.message);}}}
+ else if(a==="pkoff"&&canView(S.role)){try{const g=await ghApi("GET",null,"pk.json");if(g.status!==200){toast("Aucun code actif.");}else{const sha=(await g.json()).sha;const p=await ghApi("DELETE",{message:"Retrait du code organisateur",sha},"pk.json");toast(p.ok?"Code désactivé (les téléphones déjà débloqués gardent le droit jusqu'à la fin du jeton).":"Échec GitHub "+p.status);}}catch(e){toast("Échec : "+e.message);}}
+ else if(a==="pkuse"&&canView(S.role)){const c=($("#pk_u").value||"").trim();if(!c){toast("Tape le code.");}else{try{toast("Vérification…");const o=await pkFetch();if(!o){toast("Aucun code actif : demande à Wess.");}else{const t=await pkDec(c,o);const g=ghInfo();try{localStorage.setItem(GHK,JSON.stringify({owner:g.owner,repo:g.repo,tok:t}));}catch(e){}EDITOR=!!getTok();toast("Publication débloquée sur ce téléphone.");}}catch(e){toast("Code incorrect.");}}}
  else if(a==="mode"){S.mode=v;S.tab=v==="guide"?"avant":"show";}
  else if(a==="viewme"){S.view=null;S.cur=firstOpen();}
  else if(a==="chrole"){S.menu=false;setUnl(false);S.stay=false;S.role=null;S.view=null;AUTH={step:"pick"};AUTHSYNC=false;}
@@ -1051,9 +1055,9 @@ function ghInfo(){const s=ghRead();if(s.owner&&s.repo)return {owner:s.owner,repo
  const m=/^([^.]+)\.github\.io$/.exec(location.hostname),p=location.pathname.split("/").filter(Boolean);
  return {owner:m?m[1]:"",repo:m?(p[0]||m[1]+".github.io"):""};}
 const b64=s=>btoa(unescape(encodeURIComponent(s)));
-async function ghApi(method,body){
+async function ghApi(method,body,path){
  const g=ghInfo(),t=getTok();if(!t||!g.owner||!g.repo)throw new Error("jeton ou dépôt manquant");
- const r=await fetch(`https://api.github.com/repos/${g.owner}/${g.repo}/contents/config.json`,{method,headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
+ const r=await fetch(`https://api.github.com/repos/${g.owner}/${g.repo}/contents/${path||"config.json"}`,{method,headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
  return r;}
 async function ghPublish(x){
  const g=await ghApi("GET");let sha;
@@ -1061,6 +1065,14 @@ async function ghPublish(x){
  const p=await ghApi("PUT",{message:`Publication v${x.v}`,content:b64(JSON.stringify(x)),sha});
  if(!p.ok)throw new Error(p.status===409?"conflit, réessaie":p.status===401||p.status===403?"jeton refusé":"GitHub "+p.status);
 }
+const u8=b=>btoa(String.fromCharCode(...new Uint8Array(b))),fb=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function pkKey(code,salt){const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(code),"PBKDF2",false,["deriveKey"]);
+ return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:300000,hash:"SHA-256"},k,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);}
+async function pkEnc(code,tok){const s=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+ const c=await crypto.subtle.encrypt({name:"AES-GCM",iv},await pkKey(code,s),new TextEncoder().encode(tok));return {s:u8(s),iv:u8(iv),c:u8(c)};}
+async function pkDec(code,o){const p=await crypto.subtle.decrypt({name:"AES-GCM",iv:fb(o.iv)},await pkKey(code,fb(o.s)),fb(o.c));return new TextDecoder().decode(p);}
+async function pkFetch(){const g=ghInfo(),r=await fetch(`https://api.github.com/repos/${g.owner}/${g.repo}/contents/pk.json`,{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});
+ if(r.status===404)return null;if(!r.ok)throw new Error("GitHub "+r.status);const j=await r.json();return JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\s/g,"")))));}
 function webDb(){
  return {doc:p=>({
   get:async()=>{
@@ -1072,7 +1084,8 @@ function webDb(){
 function pubCfgBox(){
  if(!WEB)return "";
  const g=ghInfo(),has=!!getTok();
- return `<div class="card"><b>Publication des mises à jour</b><p style="color:var(--mut);font-size:13px;margin:4px 0">Le jeton GitHub permet de publier. Il reste sur ce téléphone, il n'est jamais publié.</p><input class="inp" id="gh_o" placeholder="Compte GitHub" value="${esc(g.owner)}"><input class="inp" id="gh_r" placeholder="Nom du dépôt" value="${esc(g.repo)}"><input class="inp" id="gh_t" type="password" autocomplete="off" placeholder="${has?"Jeton enregistré (vide = le garder)":"Jeton GitHub"}"><button class="big ghost" data-a="ghsave">Enregistrer</button><button class="big ghost" data-a="ghtest">Tester la publication</button>${has?`<button class="big ghost" data-a="ghdel">Retirer le jeton</button>`:""}</div>`;}
+ return `<div class="card"><b>Publication des mises à jour</b><p style="color:var(--mut);font-size:13px;margin:4px 0">Le jeton GitHub permet de publier. Il reste sur ce téléphone, il n'est jamais publié.</p><input class="inp" id="gh_o" placeholder="Compte GitHub" value="${esc(g.owner)}"><input class="inp" id="gh_r" placeholder="Nom du dépôt" value="${esc(g.repo)}"><input class="inp" id="gh_t" type="password" autocomplete="off" placeholder="${has?"Jeton enregistré (vide = le garder)":"Jeton GitHub"}"><button class="big ghost" data-a="ghsave">Enregistrer</button><button class="big ghost" data-a="ghtest">Tester la publication</button>${has?`<button class="big ghost" data-a="ghdel">Retirer le jeton</button>`:""}</div>
+ <div class="card"><b>Droit de publier pour les organisateurs</b>${has?`<p style="color:var(--mut);font-size:13px;margin:4px 0">Choisis un code secret (8 caractères minimum, long et unique). Jeff et Nico le tapent une seule fois sur leur téléphone et peuvent alors publier, sans voir le jeton. Donne-leur ce code en message privé.</p><input class="inp" id="pk_c" type="password" autocomplete="off" placeholder="Code organisateur"><button class="big ghost" data-a="pkset">Activer / changer le code</button><button class="big ghost" data-a="pkoff">Désactiver le code</button>`:`<p style="color:var(--mut);font-size:13px;margin:4px 0">Tape le code organisateur donné par Wess pour pouvoir publier depuis ce téléphone.</p><input class="inp" id="pk_u" type="password" autocomplete="off" placeholder="Code organisateur"><button class="big go" data-a="pkuse">Débloquer la publication</button>`}</div>`;}
 function firstOpen(){for(let i=1;i<=T.length;i++)if(!prog(i).d)return i;return T.length;}
 document.addEventListener("change",e=>{
  const el=e.target;
