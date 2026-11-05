@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Licornes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Bal des Licornes</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0b12;--card:#16161f;--card2:#1e1e2a;--tx:#f2f2f7;--mut:#8b8b9c;--ac:#cfd3e0;--ok:#3ddc97;--bad:#ff5a6a;--line:#2a2a38}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 -apple-system,system-ui,Segoe UI,Roboto,sans-serif}
+body{padding:0 0 90px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 14px 8px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+header h1{font-size:15px;margin:0;flex:1;letter-spacing:.04em}
+.chip{background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px;color:var(--tx)}
+button{font:inherit;color:inherit;cursor:pointer}
+main{padding:12px 14px;max-width:640px;margin:0 auto}
+.pills{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px}
+.pill{flex:0 0 auto;width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--card);font-weight:700}
+.pill.cur{border-color:var(--ac);color:var(--ac)}
+.pill.done{background:var(--ok);border-color:var(--ok);color:#06210f}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+.hd{border:0;background:linear-gradient(135deg,var(--ac),#555);color:#0b0b12}
+.hd.rainbow{background:linear-gradient(135deg,#ff4d4d,#ffb84d,#ffee4d,#4dff88,#4dc3ff,#a14dff)}
+.hd.pink{background:linear-gradient(135deg,#ff4fa3,#c2185b)}
+.hd h2{margin:0;font-size:22px}
+.hd p{margin:4px 0 0;font-weight:600}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:14px 0 6px}
+ul{margin:0;padding-left:20px}li{margin:4px 0}
+.big{display:block;width:100%;padding:18px;border:0;border-radius:14px;background:var(--ac);color:#0b0b12;font-size:18px;font-weight:800;margin-top:12px}
+.big.go{background:var(--ok)}
+.ghost{background:var(--card2);color:var(--tx);border:1px solid var(--line);font-weight:600;font-size:15px;padding:12px}
+.step{border-radius:14px;padding:12px 14px;margin:8px 0;border:1px solid var(--line);background:var(--card)}
+.step .t{font-weight:700}
+.step.done{opacity:.55}.step.done .t{text-decoration:line-through}
+.step.next{opacity:.38}
+.step.cur{opacity:1;border:2px solid var(--ac);box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 22%,transparent);padding:16px}
+.step.cur .t{font-size:20px}
+.step.cur .d{font-size:18px;margin-top:8px}
+.step .d{margin-top:4px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--card2);margin-right:4px}
+.inp{width:100%;font:inherit;padding:14px;margin:8px 0;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--tx)}
+.seg{display:flex;gap:6px;margin-bottom:8px}.seg button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:700}.seg button.on{background:var(--tx);color:#0b0b12}
+.viewbar{display:flex;gap:6px;align-items:center;margin-bottom:8px;padding:8px;border:1px dashed var(--line);border-radius:12px}.viewbar.on{border-color:#ffd23f;background:#2a2a14}.viewbar select{flex:1}.viewbar button{border:0;border-radius:8px;padding:8px 10px;background:var(--card2)}
+.an{margin-top:8px;color:#8fd3ff;font-size:14px}
+.talk{background:#0f2a3a;border-left:4px solid #4dc3ff;padding:8px 10px;border-radius:8px;margin-top:8px;font-size:15px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#10101a;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;padding:10px 0;font-size:10px;color:var(--mut)}
+nav button b{display:block;font-size:19px}
+nav button.on{color:var(--tx)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+tr.me td{background:#2a2a14}
+select{font:inherit;background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px;max-width:100%}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:8px 0;padding:10px 12px}
+summary{font-weight:700;cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.warn{color:var(--bad);font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rb{padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--card);text-align:left;font-weight:600}
+textarea{width:100%;min-height:90px;background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:8px}
+input[type=checkbox]{width:22px;height:22px}
+svg text{font-family:inherit}
+
+#toast{position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--tx);color:#0b0b12;padding:12px 14px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;text-align:center}
+#toast.show{opacity:1}
+.newv{background:#0f2a3a;border:1px solid #4dc3ff;border-radius:12px;padding:10px;margin:0 0 8px;font-size:14px}
+button:disabled{opacity:.45}
+
+nav{z-index:10}
+.tuto{text-align:center;padding:10px 0}.tic{font-size:64px;margin:8px 0}.tuto h2{margin:6px 0 12px}.tuto ul{text-align:left;max-width:420px;margin:0 auto 16px;padding-left:22px;font-size:16px}.tuto li{margin:8px 0}.tdots{display:flex;gap:6px;justify-content:center;margin-top:10px}.td{width:8px;height:8px;border-radius:50%;background:var(--line)}.td.on{background:var(--tx)}.tnav{display:flex;gap:8px;max-width:420px;margin:0 auto}.tnav .big{margin-top:0}
+header h1{flex:1}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:78%;max-width:320px;background:var(--card);border-right:1px solid var(--line);transform:translateX(-100%);transition:transform .22s;z-index:41;padding:16px;overflow:auto}.drawer.open{transform:none}
+.drawer .dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:18px}
+.mi{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;padding:14px 8px;font-size:16px;border-radius:10px}.mi span{font-size:20px;width:28px;text-align:center}.mi.on{background:var(--card2);font-weight:700}.mi.out{color:var(--bad);margin-top:12px;border-top:1px solid var(--line);border-radius:0}
+.homehd{display:flex;justify-content:space-between;align-items:flex-end;margin:6px 0 12px}.vtag{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:12px;color:var(--mut)}
+.tile-n{display:block;width:100%;text-align:left;border:1px solid var(--ac);transition:transform .12s}.tile-n:active,.tile:active{transform:scale(.97)}
+.dots{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:var(--card);font-size:12px;font-weight:700}.dot.on{background:var(--ok);border-color:var(--ok);color:#06210f}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}.tile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--card);text-align:left;transition:transform .12s}.tile .ti{font-size:26px}.tile small{color:var(--mut);font-size:12px}
+.seg2{display:flex;gap:6px;margin:6px 0}.seg2 button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:14px}.seg2 button.on{background:var(--tx);color:#0b0b12}
+.chipsrow{position:sticky;top:52px;z-index:4;background:var(--bg);display:flex;gap:6px;padding:6px 0;overflow-x:auto}.pc2{flex:0 0 auto;min-width:40px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);opacity:.45}.pc2.on{opacity:1;border-color:var(--ac)}.pc2.rd{border-color:var(--bad);background:rgba(255,90,106,.15)}
+.ph{scroll-margin-top:100px}
+.anon header{display:none}
+.hero{text-align:center;padding:22px 0 6px}
+.hero .hl{font-size:46px;line-height:1}
+.hero h1{font-size:30px;margin:6px 0 2px;letter-spacing:.02em;background:linear-gradient(90deg,#ff4d4d,#ffb84d,#ffee4d,#4dff88,#4dc3ff,#a14dff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mut);margin:0;font-size:14px}
+.steps{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0 4px}
+.steps span{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px}
+.steps b{color:var(--ac)}
+.sync{font-size:13px;color:var(--mut);margin:8px 0;text-align:center}
+.sync.off{color:var(--bad)}
+.grp h3{margin:16px 0 6px}
+.foot{color:var(--mut);font-size:13px;margin:18px 0 10px;text-align:center}
+.who{text-align:center}
+.ph{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:10px 12px;margin:8px 0}
+.ph.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}
+.ph.dim{opacity:.42}
+.ph.rd{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad) inset;background:rgba(255,90,106,.10)}
+.ph.cur{outline:3px solid var(--tx);outline-offset:2px}
+.ph .phh{font-weight:800;font-size:14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ph .pc{font-weight:600;font-size:11px;color:var(--mut);margin-left:auto;text-align:right}
+.ph .me{font-size:16px;font-weight:600;margin-top:6px;color:var(--tx)}
+.ph .pr{font-size:12px;color:var(--mut);margin:3px 0}
+.ph .pr b{color:var(--mut)}
+.chks{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.cb{display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px}
+.cb input{width:18px;height:18px}
+.okb{background:var(--ok);color:#06210f;font-weight:800;border-radius:99px;padding:4px 10px;font-size:12px}
+.part{border-left:4px solid var(--line);background:var(--card);border-radius:10px;padding:10px 12px;margin:6px 0}
+.part.rd{border-left-color:var(--bad);background:rgba(255,90,106,.10)}
+.part .pt{font-weight:800;font-size:14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.part .pc{font-weight:600;font-size:11px;color:var(--mut);margin-left:auto;text-align:right}
+.part .pd{margin-top:4px;font-size:15px}
+.tbv{color:var(--bad);font-weight:700;background:rgba(255,90,106,.14);border-radius:4px;padding:0 4px}
+input[value="À valider"]{color:var(--bad)}
+input[placeholder="À valider"]::placeholder,textarea[placeholder="À valider"]::placeholder{color:var(--bad);opacity:.85}
+.rdtag{background:var(--bad);color:#fff;font-size:12px;font-weight:800;padding:2px 8px;border-radius:99px}
+.step.rd{border-color:var(--bad)}
+.step.cur.rd{box-shadow:0 0 0 4px rgba(255,90,106,.28)}
+table.rec{border-collapse:separate;border-spacing:0;font-size:12px;min-width:980px}
+table.rec th,table.rec td{border:1px solid var(--line);padding:6px;vertical-align:top;min-width:112px;background:var(--card)}
+table.rec th{background:var(--card2);position:sticky;top:0}
+table.rec td:first-child,table.rec th:first-child{position:sticky;left:0;min-width:96px;z-index:1}
+table.rec td.rdc{background:rgba(255,90,106,.16);color:#fff}
+</style>
+</head>
+<body>
+<header><button class="chip" data-a="menu" id="menubtn">☰</button><h1 id="ttl">🦄 BAL DES LICORNES</h1><button class="chip" data-a="chrole" id="rolechip" style="display:none"></button><span id="bobtn" style="display:none"></span></header>
+<main id="app"></main>
+<nav id="nav"></nav>
+
+<script>
+/* ============ DONNÉES ============ */
+const SQ=["Malo","Franck","Christophe","Manu","Matthias","Karine","Ramon"];
+const ESC_ORGA=["Jeff","Nico","Wess","Fred"];
+const TH={strass:"STRASS",pink:"PINK",rainbow:"RAINBOW"};
+const COL={strass:"#cfd3e0",pink:"#ff4fa3",rainbow:"#ffd23f"};
+const T=[
+{n:1,h:"00h30",th:"strass",da:"STRASS (miroir)",dj:["Max"],mus:"",light:"Lyre sur podium 3/4",ecran:"Sequins miroir · boules à facettes · paillettes argent",pos:[
+ {p:1,a:["Jonathan"],c:"Veston + pantalon miroir",m:"Strass",b:[2,"argent"]},
+ {p:2,a:["Ellie"],c:"Robe strass",m:"Strass",b:[2,"argent"]},
+ {p:3,a:["Maggie"],c:"Combi miroir taille M",m:"Miroir",b:[1,"argent"]},
+ {p:4,a:["Velin"],c:"Combi miroir taille M",m:"Miroir",b:[2,"argent"]}]},
+{n:2,h:"01h00",th:"pink",da:"PINK (fourrure)",dj:["Max"],mus:"Thème de la panthère rose",light:"",ecran:"Paillettes roses · zèbre rose/rouge · léopard rose",pos:[
+ {p:1,a:["Enzo"],c:"Veste fourrure + slip noir + chaussettes roses",m:"Pink",b:[2,"rose"]},
+ {p:2,a:["Sullivan"],c:"Veste fourrure + slip noir + chaussettes roses",m:"Pink",b:[2,"rose"]},
+ {p:3,a:["Darcy"],c:"Léopard rose vinyl",m:"-",b:[1,"rose"]},
+ {p:4,a:["Apolleon"],c:"Combi rose manchon + col + queue",m:"Léopard",b:[2,"rose"]}]},
+{n:3,h:"01h30",th:"strass",da:"STRASS (armure et chaîne)",dj:["Max"],mus:"",light:"",ecran:"Rideau scintillant · métal liquide · feuille froissée argent",pos:[
+ {p:1,a:["Stach"],c:"Harnais + chaîne + slip noir",m:"Miroir",b:[2,"argent"]},
+ {p:2,a:["Christian"],c:"Harnais + chaîne + slip noir",m:"Miroir",b:[2,"argent"]},
+ {p:3,a:["Avila"],c:"Armure",m:"-",b:[1,"argent"]},
+ {p:4,a:["Maggie"],c:"Combi lamé",m:"Strass",b:[2,"argent"]}]},
+{n:4,h:"02h00",th:"rainbow",da:"RAINBOW",dj:["Max","Leo"],mus:"Over the Rainbow",light:"Renfort fixe sur 3/4",ecran:"Rainbow",pos:[
+ {p:1,a:["Enzo","Antoine","Stach"],c:"Violet / vert / bleu",m:"Rainbow",b:[4,"rainbow"]},
+ {p:2,a:["Christian","Sullivan","Velin"],c:"Orange / jaune / rouge",m:"Rainbow",b:[4,"rainbow"]},
+ {p:3,a:["Darcy"],c:"Glinda",m:"-",b:[2,"rainbow"]},
+ {p:4,a:["Avila"],c:"Dorothée",m:"-",b:[2,"rainbow"]}]},
+{n:5,h:"02h30",th:"pink",da:"PINK (disco)",dj:["Max","Leo"],mus:"",light:"",ecran:"Paillettes roses · sequins rose foncé · boules disco roses",pos:[
+ {p:1,a:["Antoine"],c:"Veste disco rose + string rose + gant",m:"Pink",b:[2,"rose"]},
+ {p:2,a:["Jonathan"],c:"Veste disco rose + string rose + gant",m:"Pink",b:[2,"rose"]},
+ {p:3,a:["Sullivan"],c:"Chaps rose",m:"Léopard",b:[1,"rose"]},
+ {p:4,a:["Stach"],c:"Chaps rose",m:"Léopard",b:[2,"rose"]}]},
+{n:6,h:"03h00",th:"strass",da:"STRASS (diamant)",dj:["Leo"],mus:"Diamonds Are a Girl's Best Friend",light:"",ecran:"Sequins miroir · sequins noir/argent · étoiles argent",pos:[
+ {p:1,a:["Enzo"],c:"String lido + épaulette strass",m:"Strass",b:[2,"argent"]},
+ {p:2,a:["Stach"],c:"String lido + épaulette strass",m:"Strass",b:[2,"argent"]},
+ {p:3,a:["Darcy"],c:"Body strass + nœud rose",m:"-",b:[1,"argent"]},
+ {p:4,a:["Ellie"],c:"Veste croc + top + short sequin",m:"Miroir",b:[2,"argent"]}]},
+{n:7,h:"03h30",th:"pink",da:"PINK",dj:["Leo"],mus:"",light:"",ecran:"Lamé rose · strass rose · étoiles roses",pos:[
+ {p:1,a:["Antoine"],c:"Harnais sequin rose + string",m:"Léopard",b:[2,"rose"]},
+ {p:2,a:["Velin"],c:"Harnais cuir + slip rose",m:"Léopard",b:[2,"rose"]},
+ {p:3,a:["Apolleon"],c:"Latex rose",m:"Pink",b:[1,"rose"]},
+ {p:4,a:["Jonathan"],c:"Harnais néoprène + slip rose",m:"Pink",b:[2,"rose"]}]},
+{n:8,fin:true,h:"04h00",th:"strass",da:"STRASS (sequin) · FINALE",dj:["Leo"],mus:"",light:"Lampe torche sur Apolleon",ecran:"Sequins miroir · étoiles argent · boules miroir",pos:[
+ {p:1,a:["Sullivan"],c:"Harnais strass + slip noir",m:"Strass",b:[2,"argent"]},
+ {p:2,a:["Christian"],c:"Harnais X + slip noir",m:"Strass",b:[2,"argent"]},
+ {p:3,a:["Maggie"],c:"Harnais",m:"Miroir",b:[1,"argent"]},
+ {p:4,a:["Avila"],c:"Robe corset sequin",m:"-",b:[2,"argent"]},
+ {p:5,a:["Apolleon"],c:"Combi strass",m:"Miroir",b:[2,"argent"]}]}
+];
+const artistsList=()=>[...new Set(T.flatMap(t=>t.pos.flatMap(p=>p.a)))];
+const ST=[
+ {k:1,t:"PRÉPARATION",i:"📍"},
+ {k:2,t:"DÉBUT DE TRANSITION",i:"🚪"},
+ {k:3,t:"APPEL PRÊT",i:"🔴"},
+ {k:4,t:"SORTIE ARTISTES",i:"🚶"},
+ {k:5,t:"ARTISTES SUR PODIUM",i:"✅"},
+ {k:6,t:"TRANSITION LUMIÈRE",i:"🌗"},
+ {k:7,t:"LANCEMENT TABLEAU",i:"🎬"},
+ {k:8,t:"COTILLONS",i:"🎉"},
+ {k:9,t:"RETOUR LOGE",i:"🏁"}
+];
+const STOCK={argent:[["60 cm cotillons",24],["80 cm cotillons",2],["80 cm serpent métallisé",4],["40 cm étoiles",4]],rose:[["60 cm",11],["40 cm cotillons",20]],rainbow:[["40 cm multicolor",40],["80 cm multicolor cotillons",4]]};
+const PHOTO=["David","Cédric","Anthony"],TIKTOK=["Yohan","Thomas"],DJS=["Max","Leo"],VID=["Eleonor","Kenny"];
+const TEAM0={sq:SQ.slice(),dj:DJS.slice(),photo:PHOTO.slice(),tiktok:TIKTOK.slice(),videast:VID.slice()};
+const roster=()=>[["Écuyers",SQ],["Artistes",artistsList()],["Orga + make-up",ESC_ORGA],["DJ",DJS],["Photo / Vidéo / TikTok",[...PHOTO,...VID,...TIKTOK]],["Régie lumière + écran",["Régie"]]];
+/* cotillons à prendre par tableau (répartition des tailles selon le stock) */
+const T0=JSON.parse(JSON.stringify(T));
+const POOL={1:[["argent 60 cm",7]],2:[["rose 60 cm",4],["rose 40 cm",3]],3:[["argent 60 cm",7]],4:[["multicolor 80 cm",4],["multicolor 40 cm",8]],5:[["rose 60 cm",4],["rose 40 cm",3]],6:[["argent 60 cm",7]],7:[["rose 60 cm",3],["rose 40 cm",4]],8:[["argent 80 cm serpent",4],["argent 80 cm cotillons",2],["argent 60 cm",3]]};
+/* priorités photo / vidéo par tableau */
+const SHOTS={1:["À valider"],2:["À valider"],3:["À valider"],4:["À valider"],5:["À valider"],6:["À valider"],7:["À valider"],8:["À valider"]};
+const SHOTS0=JSON.parse(JSON.stringify(SHOTS));
+const KW=[
+ [1,null,"ATTENTION À TOUS · PRÉPARATION TABLEAU","Tout le monde se prépare à son repère : écuyers et artistes en zone de départ, DJ, régie et médias à leur poste."],
+ [2,null,"ATTENTION À TOUS · DÉBUT DE TRANSITION, puis TOP ÉCUYERS","Chacun connaît son rôle : le DJ et la régie lancent l'ambiance, au TOP ÉCUYERS les écuyers dégagent les podiums du bas, posent les cotillons et distribuent les goodies."],
+ [3,null,"ATTENTION … PRÊT ? (ordre : DJ, Régie, Escortes)","Réponses obligatoires : « DJ PRÊT », « RÉGIE PRÊT », « ESCORTE 1 / 2 / 3-4 PRÊTE »."],
+ [4,null,"ATTENTION / TOP ESCORTES · SORTIE ARTISTES","Les escortes emmènent les artistes vers leurs podiums."],
+ [5,null,"ATTENTION DJ · RÉGIE · ESCORTES · LANCEMENT","Chaque escorte répond « PODIUM x EN POSITION » quand son artiste est sur le podium."],
+ [7,null,"TOP DJ · RÉGIE · LANCEMENT TABLEAU","Transition de lumière si prévue, puis début du show : musique, lumière, écran. Les artistes du bas montent sur le podium."],
+ [8,null,"ATTENTION / TOP COTILLONS (3, 2, 1, FEU)","Tir sur tous les podiums."],
+ [9,null,"ATTENTION / TOP RETOUR LOGE (tableau 8 : FINALE)","Barres récupérées, descente, retour en loge."]];
+const GRP={artist:"artist",squire:"squire",dj:"dj",regie:"regie",photo:"photo",tiktok:"photo",videast:"photo",team:"photo",orga:"orga"};
+const GRPN={artist:"Artistes",squire:"Écuyers",dj:"DJ",regie:"Régie lumière + écran",photo:"Photo / Vidéastes / TikTok / Autres",orga:"Orga + make-up"};
+const TBV="À valider";const TBC=TBV;
+const INFO0=()=>({open:TBC,close:TBC,rdv:TBC,brief:TBC,arr:{artist:TBC,squire:TBC,dj:TBC,regie:TBC,photo:TBC,orga:TBC}});
+
+/* ============ ÉTAT ============ */
+let S={role:null,mode:"guide",stay:false,users:{},pubV:0,hasCfg:false,dirty:false,pwPlain:{},view:null,pt:{},tov:{},shotsOv:{},stepOv:{},order:null,ovr:{},callOvr:{},forced:{},uv:{},boSec:"valider",rep:{},gen:{},team:{},tcount:null,xline:[],xcall:[],pubT:0,pubBy:"",recN:1,boN:1,boWho:"artist|Jonathan",boScope:"one",cur:1,tab:"avant",t:{},asg:{},tenue:{},cot:{},radio:{},ros:{},ok:{},info:INFO0()};
+try{const x=localStorage.getItem("bdl5");if(x)Object.assign(S,JSON.parse(x))}catch(e){}
+S.ok=S.ok||{};S.pt=S.pt||{};S.pwPlain=S.pwPlain||{};S.rep=S.rep||{};S.gen=S.gen||{};S.menu=false;S.own=S.own||{};S.skip=S.skip||{};S.tutoDone=S.tutoDone||{};S.team=S.team||{};S.xline=S.xline||[];S.xcall=S.xcall||[];["tov","shotsOv","stepOv","ovr","callOvr","forced","uv"].forEach(k=>S[k]=S[k]||{});S.info=Object.assign(INFO0(),S.info||{});S.info.arr=Object.assign(INFO0().arr,S.info.arr||{});
+const save=()=>{try{localStorage.setItem("bdl5",JSON.stringify(S))}catch(e){}};
+const tb=n=>T[n-1];
+const canView=r=>!!r&&r.type==="orga"&&["Wess","Jeff","Nico"].includes(r.name);
+const eff=()=>(S.view&&canView(S.role)&&isUnl())?S.view:S.role;
+const pk=()=>{const r=eff();return r?r.type+"|"+r.name:"x";};
+const prog=n=>((S.pt[pk()]||{})[n])||{l:0,s:1,d:0};
+const setP=(n,v)=>{(S.pt[pk()]=S.pt[pk()]||{})[n]=v;};
+
+/* ============ ÉCUYERS ============ */
+const has5=n=>tb(n).pos.some(p=>p.p===5);
+const slots=n=>has5(n)?["CL1","CL2","CL5C","CL5G","ES1","ES2","ES34"]:["CL1C","CL1G","CL2C","CL2G","ES1","ES2","ES34"];
+const slotKind=s=>s[0]==="E"?"E":(s.length===3?"CG":s[3]);
+const slotLabel=s=>s[0]==="E"?({ES1:"Escorte podium 1",ES2:"Escorte podium 2",ES34:"Escorte podiums 3 et 4"})[s]:`Podium ${s[2]} · ${({C:"cotillons",G:"goodies",CG:"cotillons + goodies"})[slotKind(s)]}`;
+const ga=(n,s)=>(S.asg[n]&&S.asg[n][s])||SQ[(slots(n).indexOf(s)+n-1)%Math.max(1,SQ.length)];
+const tenueOf=n=>S.tenue[n]||(tb(n).th==="pink"?"ROSE":"NOIR");
+const sqRole=(name,n)=>slots(n).find(s=>ga(n,s)===name);
+const escPos={ES1:[1],ES2:[2],ES34:[3,4]};
+const escOf=(n,p)=>p===5?ESC_ORGA.slice():[ga(n,p===1?"ES1":p===2?"ES2":"ES34")];
+const bs=b=>`${b[0]} ${b[1]}`;
+const pods=n=>has5(n)?"1, 2 et 5":"1 et 2";
+
+const clearGroups=n=>{const g={};slots(n).filter(s=>s[0]==="C").forEach(s=>{(g[s[2]]=g[s[2]]||[]).push(ga(n,s));});return Object.keys(g).map(p=>g[p].join(" + "));};
+const cotCarriers=n=>slots(n).filter(s=>s[0]==="C"&&slotKind(s)!=="G").map(s=>ga(n,s));
+function calls(t){const n=t.n,e1=ga(n,"ES1"),e2=ga(n,"ES2"),e34=ga(n,"ES34");
+ const L=[
+ [1,"ATTENTION",`À TOUS · PRÉPARATION TABLEAU ${n}`],
+ [2,"ATTENTION","À TOUS · DÉBUT DE TRANSITION"],
+ [2,"TOP",`ÉCUYERS (${clearGroups(n).join(" · ")}) · dégagement podium`],
+ [3,"ATTENTION",`PRÊT ? DJ ${t.dj.join(" / ")} (transition)`,"« DJ PRÊT »"],
+ [3,"ATTENTION","PRÊT ? RÉGIE (lumière, écran)","« RÉGIE PRÊT »"],
+ [3,"ATTENTION",`PRÊT ? ESCORTE podium 1 (${e1})`,"« ESCORTE 1 PRÊTE »"],
+ [3,"ATTENTION",`PRÊT ? ESCORTE podium 2 (${e2})`,"« ESCORTE 2 PRÊTE »"],
+ [3,"ATTENTION",`PRÊT ? ESCORTE podiums 3 et 4 (${e34})`,"« ESCORTE 3-4 PRÊTE »"]];
+ if(has5(n))L.push([3,"ATTENTION","PRÊT ? ESCORTE podium 5 (Jeff, Nico, Fred)","« ESCORTE 5 PRÊTE »"]);
+ L.push(
+ [4,"ATTENTION",`ESCORTES ${e1}, ${e2}, ${e34}`+(has5(n)?" + Jeff, Nico, Wess, Fred (Apolleon)":"")+" · sortie artistes"],
+ [4,"TOP","ESCORTES · sortie artistes"],
+ [5,"ATTENTION","DJ · RÉGIE · ESCORTES : lancement (escortes : réponds quand ton artiste est sur le podium)"],
+ [5,"ATTENTION",`ESCORTE podium 1 (${e1}) · artiste sur le podium ?`,"« PODIUM 1 EN POSITION »"],
+ [5,"ATTENTION",`ESCORTE podium 2 (${e2}) · artiste sur le podium ?`,"« PODIUM 2 EN POSITION »"],
+ [5,"ATTENTION",`ESCORTE podiums 3 et 4 (${e34}) · artistes sur les podiums ?`,"« PODIUMS 3-4 EN POSITION »"]);
+ if(has5(n))L.push([5,"ATTENTION","ESCORTE podium 5 · artiste sur le podium ?","« PODIUM 5 EN POSITION »"]);
+ L.push(
+ [7,"ATTENTION",`DJ · RÉGIE : lancement tableau ${n}`],
+ [7,"TOP",`DJ · RÉGIE · LANCEMENT TABLEAU ${n} (transition lumière : ${F(t.lumTrans)})`],
+ [8,"ATTENTION",`ÉCUYERS ${cotCarriers(n).join(" et ")} : cotillons`],
+ [8,"TOP","COTILLONS · 3, 2, 1, FEU"],
+ [9,"ATTENTION",t.fin?"FINALE":"RETOUR LOGE"],
+ [9,"TOP",t.fin?"FINALE · tout le monde au centre":`RETOUR LOGE · prépa tableau ${n+1}`]);
+ (S.xcall||[]).filter(e=>e.n==="*"||+e.n===n).forEach(e=>L.push(e.reply?[+e.k,e.type,e.text,e.reply]:[+e.k,e.type,e.text]));
+ return L.map((c,i)=>{const o=S.callOvr[n+"|"+i],r=c.slice();if(o){if(o.t)r[2]=o.t;if(o.r&&r.length>3)r[3]=o.r;}return r;});}
+const sortCalls=a=>{const o=ORD();return a.map((c,i)=>[c,i]).sort((x,y)=>o.indexOf(x[0][0])-o.indexOf(y[0][0])||x[1]-y[1]).map(x=>x[0]);};
+const readyList=t=>{const n=t.n;return [["dj","DJ"],["regie","Régie"],["e1","Escorte 1 · "+ga(n,"ES1")],["e2","Escorte 2 · "+ga(n,"ES2")],["e34","Escorte 3-4 · "+ga(n,"ES34")],...(has5(n)?[["e5","Escorte 5 · Jeff, Nico, Fred"]]:[])];};
+const posList=t=>{const n=t.n;return [["q1","Podium 1 · "+ga(n,"ES1")],["q2","Podium 2 · "+ga(n,"ES2")],["q34","Podiums 3-4 · "+ga(n,"ES34")],...(has5(n)?[["q5","Podium 5 · Jeff, Nico, Fred"]]:[])];};
+const talk=(k,t)=>calls(t).filter(c=>c[0]===k);
+const callHtml=c=>`<div class="talk"><b>📻 ${c[1]}</b> ${c[2]}${c[3]?`<br><span style="color:var(--ok)">↩ Réponse : ${c[3]}</span>`:""}</div>`;
+
+/* cotillons portés et tirés par les écuyers qui vident : équipe podium 1 = podiums 1+3, équipe 2 = podiums 2+4, équipe 5 = podium 5 */
+const podTeam=p=>p===1||p===3?"1":p===2||p===4?"2":"5";
+function carry(n){
+ const t=tb(n),sl=slots(n).filter(s=>s[0]==="C"&&slotKind(s)!=="G"),pool=[];
+ (POOL[n]||[]).forEach(x=>{for(let i=0;i<x[1];i++)pool.push(x[0]);});
+ const res={};sl.forEach(s=>res[s]=[]);
+ [1,2,3,4,5].forEach(p=>{const q=t.pos.find(x=>x.p===p);if(!q)return;const s=sl.find(x=>x[2]===podTeam(p));if(!s)return;
+  for(let i=0;i<q.b[0];i++)res[s].push({pod:p,l:pool.shift()||q.b[1],c:q.b[1]});});
+ return res;}
+const grp=a=>{const o={};a.forEach(x=>o[x]=(o[x]||0)+1);return Object.keys(o).map(k=>`${o[k]}× ${k}`).join(" + ");};
+const cg=a=>{const o={};a.forEach(x=>{(o[x.pod]=o[x.pod]||[]).push(x.l)});return Object.keys(o).map(p=>`podium ${p} : ${grp(o[p])}`).join(" · ");};
+const cgc=a=>{const o={};a.forEach(x=>{(o[x.pod]=o[x.pod]||[]).push(x.c)});return Object.keys(o).map(p=>`podium ${p} : ${grp(o[p])}`).join(" · ");};
+const carryTxt=(n,s)=>{const a=carry(n)[s]||[];return a.length?`${a.length} · ${cgc(a)}`:"aucune";};
+const teamPods=s=>({"1":[1,3],"2":[2,4],"5":[5]})[s[2]];
+
+const ACTIVE=[1,2,3,4,5,7,8,9];
+const ORD=()=>{const o=S.order;return Array.isArray(o)&&o.length===ACTIVE.length&&ACTIVE.every(k=>o.includes(k))?o:ACTIVE.slice();};
+const stI=k=>(S.stepOv[k]&&S.stepOv[k].i)||ST[k-1].i;
+const stT=k=>(S.stepOv[k]&&S.stepOv[k].t)||ST[k-1].t;
+const SS=()=>ORD().map((k,i)=>({k,pos:i+1,i:stI(k)}));
+const stTitle=(k,t)=>t.fin&&k===9?"FINALE":stT(k);
+
+function nextApp(name,n){for(let i=n;i<8;i++){const x=T[i].pos.find(p=>p.a.includes(name));if(x)return {t:T[i],x};}return null;}
+
+/* ============ CONTENU PERSONNALISÉ ============ */
+const F=v=>(v===undefined||v===null||String(v).trim()==="")?TBV:String(v);
+const HAUT=[3,4],isHaut=p=>HAUT.includes(p);
+const parseH=h=>{const m=/^(\d+)h(\d*)$/.exec(String(h||"").trim());return m?(+m[1])*60+(+(m[2]||0)):null;};
+const fmtH=m=>{m=((m%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,"0")+"h"+String(m%60).padStart(2,"0");};
+const REP0={squire:20,artist:10};
+const REPG=[["squire","Écuyers"],["artist","Artistes"],["dj","DJ"],["regie","Régie"],["media","Vidéastes · photo · TikTok · équipe"],["orga","Orga"]];
+const repGroup=ty=>({artist:"artist",squire:"squire",dj:"dj",regie:"regie",orga:"orga"})[ty]||"media";
+function repMin(g,t){const a=t.rep&&t.rep[g],b=S.rep&&S.rep[g];const v=(a!==undefined&&a!==null&&a!=="")?a:((b!==undefined&&b!==null&&b!=="")?b:REP0[g]);return (v===undefined||isNaN(+v))?undefined:+v;}
+function repOf(g,t){const m=repMin(g,t),h=parseH(t.h);return (m===undefined||h===null)?TBV:fmtH(h-m);}
+const MEDIA=[];const fillMedia=()=>{MEDIA.length=0;MEDIA.push(...PHOTO,...VID,...TIKTOK,"Équipe");};fillMedia();
+
+function ctx0(role,t){
+ const n=t.n,nx=T[n],tn=tenueOf(n),nm=role.name,fin=!!t.fin;
+ const r={off:false,wear:[],watch:[],st:{}};
+ const S_=(k,d,o)=>{r.st[k]=Object.assign({d:d,hl:[]},o||{});};
+ const last="FINALE : tous au centre avec Apolleon.";
+ const nxTen=nx&&tenueOf(n+1)!==tn?`Prochain tableau : changement de tenue (${tenueOf(n+1)}).`:null;
+ const rep=repOf(repGroup(role.type),t);
+ if(role.type==="artist"){
+  const me=t.pos.find(p=>p.a.includes(nm)),nxa=nextApp(nm,n);
+  if(!me){
+   if(!fin){r.off=true;r.watch.push(nxa?`Hors tableau. Prochain : tableau ${nxa.t.n} (${nxa.t.h}) · ${nxa.x.c}.`:"Plus de passage ce soir.");return r;}
+   r.wear.push("Reste en tenue. Finale.");S_(1,`Zone de départ à ${rep}.`);S_(9,last,{hl:[5]});return r;
+  }
+  const es=escOf(n,me.p).join(", "),haut=isHaut(me.p),h=[me.p];
+  const part=me.a.length>1?` (avec ${me.a.filter(x=>x!==nm).join(", ")})`:"";
+  r.wear=[`Costume : ${me.c}`,`Masque : ${me.m}`];
+  r.watch=[`Position ${me.p}${part} · podium ${me.p} (${haut?"en hauteur":"au sol"})`,`Zone de départ à ${rep}`,`Musique : ${F(t.mus)}`];
+  if(nxa)r.watch.push(`Prochain tableau : ${nxa.t.n} (${nxa.t.h}) · ${nxa.x.c}`);
+  S_(1,`PRÉPARATION · sois en zone de départ à ${rep}, prêt : costume, masque, maquillage. ${es} te prend en charge.`);
+  S_(4,haut?`Suis ${es} jusqu'au podium ${me.p}. Monte sur le podium (non éclairé).`:`Suis ${es} jusqu'au podium ${me.p}. Attends devant le podium.`,{hl:h});
+  S_(5,haut?"En position sur le podium (non éclairé).":`En position devant le podium ${me.p}.`,{hl:h});
+  S_(7,haut?"Le podium est éclairé : le show démarre.":"Monte sur le podium en même temps que les autres.",{hl:h});
+  S_(8,"Cotillons tirés sur ton podium.",{hl:h});
+  S_(9,fin?last:`Descente aidée par l'écuyer, retour loge.${nxa?` Prépare : tableau ${nxa.t.n}, ${nxa.x.c}.`:""}`,{hl:fin?[5]:h});
+  return r;
+ }
+ if(role.type==="squire"){
+  const s=sqRole(nm,n),kind=slotKind(s);
+  r.wear=[`Tenue : ${tn}`];if(nxTen)r.watch.push(nxTen);
+  if(kind!=="E"){
+   const pod=+s[2],mates=slots(n).filter(x=>x!==s&&x[0]==="C"&&x[2]===s[2]).map(x=>ga(n,x));
+   const doC=kind==="C"||kind==="CG",doG=kind==="G"||kind==="CG";
+   const mine=carry(n)[s]||[],pl=[...new Set(mine.map(x=>x.pod))],h=[pod];
+   if(doC)r.wear.push(`Barres à cotillons : ${mine.length?`${mine.length} · ${cgc(mine)} (tailles ${TBV})`:"aucune"}`);
+   if(doG)r.wear.push(`Goodies : ${F(S.gen&&S.gen.goodies)}`);
+   r.watch.unshift(`Podium ${pod}${mates.length?` avec ${mates.join(", ")}`:""} · ${({C:"cotillons",G:"goodies",CG:"cotillons + goodies"})[kind]}`);
+   if(mine.some(x=>x.pod>=3))r.watch.push(`Podiums 3 et 4 : mise en place des cotillons · ${F(S.gen&&S.gen.cot34)}`);
+   S_(1,`PRÉPARATION · zone de départ à ${rep}. ${doC?`Prends tes barres à cotillons (${mine.length}). `:""}${doG?"Prends tes goodies. ":""}Attends le TOP ÉCUYERS.`,{hl:h});
+   S_(2,`TOP ÉCUYERS : dégage le podium ${pod}. ${doC?"Installe les cotillons à un endroit stratégique. ":""}${doG?"Distribue les goodies.":""}`.trim(),{hl:h});
+   S_(3,doG?"Continue les goodies.":"Cotillons en place, garde-les à l'œil.",{hl:h});
+   S_(4,`Escortes en route. Replace-toi à l'arrière du podium ${pod}.`,{hl:h});
+   S_(5,"Artiste devant le podium : laisse le passage, reste à l'arrière.",{hl:h});
+   S_(7,"L'artiste monte sur le podium. Reste à l'arrière.",{hl:h});
+   S_(8,doC?`Au TOP : tire ${cgc(mine)}.`:"Reste à l'arrière du podium, laisse l'espace libre.",{hl:doC?pl:h});
+   S_(9,fin?last:`${doC?"Récupère les barres à cotillons. ":""}${doG?"Aide l'artiste à descendre. ":""}${mates.length?`Pointe avec ${mates[0]} : décale le public de ton côté pour ouvrir le passage.`:"Ouvre le passage en décalant le public."}`.trim(),{hl:fin?[5]:h});
+  }else{
+   const ps=escPos[s],arts=ps.map(p=>{const x=t.pos.find(q=>q.p===p);return `${x.a.join("+")} (pos ${p})`}).join(" et ");
+   const podTxt=ps.join(" et "),lab=({ES1:"1",ES2:"2",ES34:"3-4"})[s],ord=({ES1:"3e",ES2:"4e",ES34:"5e"})[s];
+   const hauts=ps.filter(isHaut),after=F(t["esc_"+s]);
+   r.watch.unshift(`Escorte : ${arts} → podium ${podTxt}`);
+   S_(1,`PRÉPARATION · zone de départ à ${rep}. Assure-toi que ${arts} sont prêts : costume, masque, maquillage. Tu sais où les amener : podium ${podTxt}.`);
+   S_(3,`PRÊT demandé (${ord}) : réponds « ESCORTE ${lab} PRÊTE » quand ${arts} sont prêts en zone départ.`,{rd:true});
+   S_(4,`TOP ESCORTES : emmène ${arts} jusqu'au podium ${podTxt}.${hauts.length?" Podium en hauteur : fais monter l'artiste (non éclairé).":""}`,{hl:ps});
+   S_(5,`ATTENTION LANCEMENT : réponds « PODIUM ${lab} EN POSITION » quand ${arts} sont sur le podium.`,{rd:true,hl:ps});
+   S_(7,hauts.length===ps.length?"Le podium s'éclaire : le show démarre.":"Les artistes du bas montent sur le podium.",{hl:ps});
+   S_(8,"Cotillons tirés par les écuyers de dégagement. Dégage la zone.",{hl:ps});
+   S_(9,fin?last:`Récupère ${arts}. Ensuite : ${after}`,{hl:fin?[5]:ps});
+  }
+  return r;
+ }
+ if(role.type==="dj"){
+  if(!t.dj.includes(nm)){r.off=true;r.watch.push(`Hors platines (${t.dj.join(" / ")}).`);return r;}
+  r.wear=[`Ambiance : ${F(t.musAmb)}`,`Transition : ${F(t.musTrans)}`,`Lancement : ${F(t.mus)}`];
+  r.watch=[`DA : ${t.da}`];if(t.dj.length>1)r.watch.push(`B2B avec ${t.dj.find(y=>y!==nm)} : calage avant.`);
+  S_(1,`Repère ${rep}.`);
+  S_(2,`DÉBUT DE TRANSITION : lance ${F(t.musAmb)}.`);
+  S_(3,"PRÊT demandé (1er) : réponds « DJ PRÊT ».",{rd:true});
+  S_(5,`ATTENTION LANCEMENT : transition musicale ${F(t.musTrans)}.`);
+  S_(7,`TOP LANCEMENT TABLEAU : ${F(t.mus)}.`);
+  return r;
+ }
+ if(role.type==="regie"){
+  r.wear=[`Ambiance : ${F(t.lumAmb)}`,`Transition : ${F(t.lumTrans)}`,`Lumière : ${F(t.light)}`,`Écran : ${F(t.ecran)}`];
+  r.watch=[`DA : ${t.da}`];
+  S_(1,`Repère ${rep}.`);
+  S_(2,`DÉBUT DE TRANSITION : ambiance ${F(t.lumAmb)}.`);
+  S_(3,"PRÊT demandé (2e) : réponds « RÉGIE PRÊT ».",{rd:true});
+  S_(5,"ATTENTION LANCEMENT : podiums 3 et 4 non éclairés.");
+  S_(7,`TOP LANCEMENT TABLEAU : transition ${F(t.lumTrans)}, puis lumière ${F(t.light)} · écran ${F(t.ecran)}.`);
+  return r;
+ }
+ if(role.type==="photo"||role.type==="tiktok"||role.type==="videast"||role.type==="team"){
+  const pl=F((t.place||{})[nm]),ci=F((t.cible||{})[nm]);
+  r.wear=["Tenue : noir",`Cible : ${ci}`,`Angle : ${pl}`];
+  r.watch=[`DA : ${t.da}`];
+  S_(1,`Repère ${rep}.`);
+  S_(2,`Prends ton angle : ${pl}.`);
+  S_(7,`Lancement : couvre ${ci}.`);
+  if(fin)S_(9,last);
+  return r;
+ }
+ const wess=nm==="Wess";
+ r.wear=["Radio canal commun + oreillette",`Écuyers : tenue ${tn}, barres à cotillons prêtes`,"Artistes : costume, masque",`DJ ${t.dj.join("/")} prêt`,`Écran : ${F(t.ecran)}`,`Lumière : ${F(t.light)}`];
+ r.watch=[`Affectations : ${slots(n).map(s=>`${slotLabel(s)} = ${ga(n,s)}`).join(" · ")}`];
+ if(!wess)r.watch.unshift(`Mission : ${TBV}`);
+ if(nxTen)r.watch.push(nxTen);
+ if(has5(n))r.watch.push("Position 5 (Apolleon) : escorte Jeff, Nico, Wess, Fred.");
+ const ctl={1:`Repère ${rep}. Préparation : écuyers et artistes en zone de départ.`,2:`Début de transition, puis dégagement des podiums ${pods(n)}.`,3:"Collecte les PRÊT dans l'ordre : DJ, Régie, Escortes.",4:has5(n)?"Sortie artistes. Escorte d'Apolleon (pos 5) : Jeff, Nico, Wess, Fred.":"Sortie artistes.",5:"Collecte les « EN POSITION » de chaque escorte.",6:`Transition : lumière ${F(t.lumTrans)} · musique ${F(t.musTrans)}.`,7:"Lancement : les artistes du bas montent sur le podium.",8:"Cotillons.",9:fin?last:`Retour loge. Prépa tableau ${n+1}.`};
+ for(const k of ACTIVE)S_(k,wess?(k===1?`Écuyers ${repOf("squire",t)} · artistes ${repOf("artist",t)}`:""):`Contrôle : ${ctl[k]}`,{say:wess?talk(k,t):null,hl:(has5(n)&&(k===4||k===5))?[5]:[]});
+ return r;
+}
+const roleKey=(role,t)=>{if(role.type==="squire"){const q=sqRole(role.name,t.n);return "squire"+(q?slotKind(q):"");}return role.type;};
+const relSteps=c=>ORD().filter(k=>c.st[k]);
+function ctx(role,t){const r=ctx0(role,t);if(r.off)return r;
+ const rk=roleKey(role,t);
+ for(let k=1;k<=9;k++){const x=r.st[k];if(!x)continue;const ov=S.ovr[t.n+"|"+k+"|"+rk]??S.ovr["*|"+k+"|"+rk];if(ov!=null&&ov!=="")x.d=ov;}
+ (S.xline||[]).forEach(e=>{if((e.n==="*"||+e.n===t.n)&&ORD().includes(+e.k)&&matchRk(e.g,rk)){if(!r.st[+e.k])r.st[+e.k]={d:"",hl:[]};(r.st[+e.k].extra=r.st[+e.k].extra||[]).push(e.text);}});
+ const R=relSteps(r);
+ R.forEach((k,i)=>{const x=r.st[k];
+  if(i<R.length-1)x.an=`Ensuite : ${r.st[R[i+1]].d}`;
+  else if(t.n<T.length){const c2=ctx0(role,tb(t.n+1));x.an=`Prépare le tableau ${t.n+1} (${tb(t.n+1).h}) : ${c2.off?"pas de passage pour toi.":(c2.wear[0]||"reste prêt.")}`;}
+  else x.an="Dernier tableau. Bravo à l'équipe.";});
+ return r;}
+const CUE=[null,"ATTENTION À TOUS · PRÉPARATION","ATTENTION À TOUS · DÉBUT DE TRANSITION puis TOP ÉCUYERS","ATTENTION … PRÊT ? (réponse dans l'ordre)","ATTENTION puis TOP ESCORTES","ATTENTION DJ · RÉGIE · ESCORTES : lancement","ATTENTION puis TOP TRANSITION LUMIÈRE","TOP DJ · RÉGIE · LANCEMENT TABLEAU","ATTENTION puis TOP COTILLONS","ATTENTION puis TOP RETOUR LOGE"];
+const cueTxt=(k,t,r)=>{
+ if(S.stepOv[k]&&S.stepOv[k].cue)return S.stepOv[k].cue;
+ if(t.fin&&k===9)return "ATTENTION puis TOP FINALE";
+ if(k===1&&r)return `ATTENTION À TOUS · PRÉPARATION · repère ${repOf(repGroup(r.type),t)}`;
+ if(k===2&&r){if(r.type==="squire"){const q=sqRole(r.name,t.n);if(q&&q[0]==="C")return "TOP ÉCUYERS";}if(["dj","regie","photo","tiktok","videast","team"].includes(r.type))return "ATTENTION À TOUS · DÉBUT DE TRANSITION";}
+ if(k===3&&r){if(r.type==="dj")return "ATTENTION DJ · 1er à répondre";if(r.type==="regie")return "ATTENTION RÉGIE · 2e à répondre";
+  if(r.type==="squire"){const q=sqRole(r.name,t.n);if(q&&q[0]==="E")return `ATTENTION ESCORTE · ${({ES1:"3e",ES2:"4e",ES34:"5e"})[q]} à répondre`;}}
+ return CUE[k];};
+
+/* ============ PLAN ============ */
+function map(hl,five){const P={1:[34,24],2:[126,24],3:[34,88],4:[126,88],5:[80,56]};
+ let s=`<svg viewBox="0 0 160 112" width="130" style="float:right;margin:0 0 6px 8px"><rect x="4" y="4" width="152" height="104" rx="10" fill="none" stroke="#333"/>`;
+ for(const k in P){if(k==5&&!five)continue;const on=hl.includes(+k);s+=`<circle cx="${P[k][0]}" cy="${P[k][1]}" r="15" fill="${on?"var(--ac)":"#2a2a38"}"/><text x="${P[k][0]}" y="${P[k][1]+5}" text-anchor="middle" font-size="15" font-weight="700" fill="${on?"#0b0b12":"#8b8b9c"}">${k}</text>`;}
+ return s+"</svg>";}
+
+/* ============ RÔLES ============ */
+let ROLES=[];function buildRoles(){ROLES=[
+ ["Artistes",artistsList().map(x=>({type:"artist",name:x}))],
+ ["Écuyers",SQ.map(x=>({type:"squire",name:x}))],
+ ["DJ",DJS.map(x=>({type:"dj",name:x}))],
+ ["Régie lumière + écran",[{type:"regie",name:"Régie"}]],
+ ["Vidéastes",VID.map(x=>({type:"videast",name:x}))],
+ ["Orga",ESC_ORGA.map(x=>({type:"orga",name:x}))],
+ ["Photographes",PHOTO.map(x=>({type:"photo",name:x}))],
+ ["TikTok",TIKTOK.map(x=>({type:"tiktok",name:x}))],
+ ["Autres (stand, physio, make-up public...)",[{type:"team",name:"Équipe"}]]
+];}
+const roleLabel=r=>r?({artist:"Artiste",squire:"Écuyer",dj:"DJ",regie:"Régie",videast:"Vidéaste",orga:"Orga",team:"Équipe",photo:"Photo",tiktok:"TikTok"})[r.type]+" · "+r.name:"Choisir";
+
+/* ============ RENDER ============ */
+const $=s=>document.querySelector(s);
+let UNL=false;try{UNL=sessionStorage.getItem("bdl-u")==="1"}catch(e){}
+let AUTH=null,DB=null,USERNS=null,EDITOR=false,REMOTEV=0,SYNC={ok:null,msg:""},AUTHSYNC=false,READY=false,TOASTT=null,RESETC=false,PUBCONFLICT=false;
+const ORGA3=["Wess","Jeff","Nico"];
+const setUnl=v=>{UNL=v;try{sessionStorage.setItem("bdl-u",v?"1":"0")}catch(e){}};
+const isUnl=()=>!!S.role&&(UNL||S.stay);
+const rnd=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
+async function hash(str){
+ try{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}}catch(e){}
+ return hashF(str);}
+function hashF(str){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677);}
+ h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+ return "f"+(4294967296*(2097151&h2)+(h1>>>0)).toString(16);}
+const verify=async(str,stored)=>stored&&stored[0]==="f"?hashF(str)===stored:(await hash(str))===stored;
+const keyLabel=k=>{const [ty,nm]=k.split("|");return roleLabel({type:ty,name:nm});};
+const toast=m=>{try{let d=document.getElementById("toast");if(!d){d=document.createElement("div");d.id="toast";document.body.appendChild(d);}d.textContent=m;d.className="show";clearTimeout(TOASTT);TOASTT=setTimeout(()=>{d.className="";},3800);}catch(e){}};
+const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error("délai dépassé")),ms))]);
+
+/* ---- synchronisation : version publiée en ligne, copie locale pour le hors ligne ---- */
+const PUB_KEYS=["asg","tenue","info","tov","shotsOv","stepOv","order","ovr","callOvr","rep","gen","team","tcount","xline","xcall"];
+const PUB_DEF=()=>({asg:{},tenue:{},info:INFO0(),tov:{},shotsOv:{},stepOv:{},order:null,ovr:{},callOvr:{},rep:{},gen:{},team:{},tcount:null,xline:[],xcall:[]});
+async function initCaps(){
+ try{if(window.claude&&window.claude.use){DB=await window.claude.use("db");USERNS=await window.claude.use("user");}}catch(e){}
+ try{if(USERNS)EDITOR=!!(await USERNS.canEdit());}catch(e){}
+ if(!DB&&WEB){DB=webDb();EDITOR=!!getTok();}
+}
+function applyPub(d){
+ let cfg={},users={};try{cfg=JSON.parse(d.cfg||"{}");}catch(e){}try{users=JSON.parse(d.users||"{}");}catch(e){}
+ const def=PUB_DEF();PUB_KEYS.forEach(k=>{S[k]=(cfg[k]!==undefined&&cfg[k]!==null)?cfg[k]:def[k];});
+ S.info=Object.assign(INFO0(),S.info||{});S.info.arr=Object.assign(INFO0().arr,S.info.arr||{});
+ S.users=users;S.pubV=d.v||0;S.pubT=d.t||0;S.pubBy=d.by||"";S.hasCfg=true;S.dirty=false;
+}
+const offMsg=()=>S.hasCfg?`Hors ligne · version ${S.pubV} enregistrée sur ce téléphone.`:"Hors ligne · aucune version enregistrée.";
+async function syncConfig(apply){
+ if(!DB){SYNC={ok:false,msg:offMsg()};return false;}
+ try{
+  const snap=await withTimeout(DB.doc("bal/config").get(),8000);
+  if(!snap.exists){REMOTEV=0;SYNC={ok:true,msg:S.hasCfg?`Version ${S.pubV} enregistrée.`:"Aucune version publiée pour l'instant."};return true;}
+  const d=snap.data();REMOTEV=d.v||0;
+  if(apply){
+   if(S.dirty)SYNC={ok:true,msg:`Version ${REMOTEV} disponible · brouillon non publié conservé.`};
+   else{if(REMOTEV!==S.pubV||!S.hasCfg)applyPub(d);SYNC={ok:true,msg:`Version ${S.pubV} à jour.`};}
+  }else SYNC={ok:true,msg:`Version ${REMOTEV} disponible.`};
+  return true;
+ }catch(e){SYNC={ok:false,msg:offMsg()};return false;}
+}
+async function publishCfg(force){
+ if(!DB){toast("Hors ligne : publication impossible.");return;}
+ if(!EDITOR){toast(WEB?"Ajoute le jeton de publication (Back office › Général).":"Publication réservée aux comptes éditeurs.");return;}
+ if(!force){const er=checks().filter(x=>x[0]==="err");if(er.length){S.boSec="controles";toast(`${er.length} erreur(s) : voir Contrôles.`);return;}}
+ try{
+  const snap=await withTimeout(DB.doc("bal/config").get(),8000),rv=snap.exists?(snap.data().v||0):0;
+  if(rv>(S.pubV||0)&&!force){REMOTEV=rv;PUBCONFLICT=true;toast(`Une version plus récente (${rv}) existe.`);return;}
+  const keys=new Set(ROLES.flatMap(g=>g[1]).map(r=>r.type+"|"+r.name));Object.keys(S.users).forEach(k=>{if(!keys.has(k))delete S.users[k];});Object.keys(S.pwPlain).forEach(k=>{if(!keys.has(k))delete S.pwPlain[k];});
+  const v=rv+1,cfg={};PUB_KEYS.forEach(k=>cfg[k]=S[k]);
+  await withTimeout(DB.doc("secret/pw").set({v,pw:JSON.stringify(S.pwPlain)}),10000);
+  await withTimeout(DB.doc("bal/config").set({v,t:Date.now(),by:S.role.name,cfg:JSON.stringify(cfg),users:JSON.stringify(S.users)}),10000);
+  S.pubV=v;S.pubT=Date.now();S.pubBy=S.role.name;REMOTEV=v;S.dirty=false;S.hasCfg=true;PUBCONFLICT=false;toast(`Version ${v} publiée.`);
+ }catch(e){toast("Échec de la publication : "+(e&&e.message?e.message:"réseau"));}
+}
+async function loadPw(){
+ if(!DB||!EDITOR||S.dirty)return;
+ try{const s=await withTimeout(DB.doc("secret/pw").get(),8000);if(s.exists){try{S.pwPlain=JSON.parse(s.data().pw||"{}");}catch(e){}}render();}catch(e){}
+}
+async function setPw(k,pw){const salt=rnd();S.users[k]={s:salt,h:await hash(salt+pw),v:Date.now()};S.pwPlain[k]=pw;S.dirty=true;}
+const canCreate=k=>{const [ty,nm]=k.split("|");return !S.users[k]&&!S.hasCfg&&(!DB||(ty==="orga"&&ORGA3.includes(nm)));};
+
+function render(){
+ applyAll();
+ const unl=!!S.role&&isUnl();document.body.classList.toggle("anon",!unl);
+ const chip=$("#rolechip");chip.textContent=unl?roleLabel(S.role)+" 🔒":"";chip.style.display=unl?"":"none";
+ $("#bobtn").style.display=unl&&canView(S.role)?"":"none";
+ if(!unl){
+  $("#nav").innerHTML="";
+  if(!READY){$("#app").innerHTML=`<h2>Bal des Licornes</h2><p style="color:var(--mut)">Chargement…</p>`;return;}
+  if(!AUTHSYNC){AUTHSYNC=true;syncConfig(true).then(()=>render());}
+  $("#app").innerHTML=vAuth();save();return;
+ }
+ if(S.askpw){document.body.classList.add("anon");$("#nav").innerHTML="";$("#app").innerHTML=vNewPw();save();return;}
+ if(S.tutoOpen){document.body.classList.add("anon");$("#nav").innerHTML="";$("#app").innerHTML=vTuto();save();return;}
+ const et=eff().type,recOk=["orga","dj","regie"].includes(et);
+ const nav=[["home","🏠","Accueil"],["show","🎬","Tableau"],["avant","🗓","Soirée"],["menu","☰","Menu"]];
+ const ALLOW=["home","show","avant","set"];
+ if(recOk)ALLOW.push("rec");
+ if(et==="orga")ALLOW.push("tab","esc","cot","rad");else if(et==="squire")ALLOW.push("cot");
+ if(![...ALLOW,...(canView(S.role)?["bo"]:[])].includes(S.tab))S.tab="home";
+ $("#nav").innerHTML=nav.map(x=>`<button class="${(x[0]==="menu"?S.menu:S.tab===x[0])?"on":""}" data-a="${x[0]==="menu"?"menu":"tab:"+x[0]}"><b>${x[1]}</b>${x[2]}</button>`).join("");
+ const m={avant:vAvant,script:vScript,show:vShow,tab:vTab,esc:vEsc,cot:vCot,rad:vRad,set:vSet,bo:vBO,rec:vRecap,home:vHome};
+ const nv=REMOTEV>(S.pubV||0)?`<div class="newv">🔄 Version ${REMOTEV} disponible. Déconnecte-toi puis reconnecte-toi (en ligne) pour la recevoir.</div>`:"";
+ const sv=S.view&&canView(S.role)?S.view:null;
+ const vb=canView(S.role)?`<div class="viewbar${sv?" on":""}"><span>👁</span><select data-sel="view"><option value="">Ma vue (${S.role.name})</option>${ROLES.map(g=>`<optgroup label="${g[0]}">${g[1].map(r=>`<option value="${r.type}|${r.name}" ${sv&&sv.type===r.type&&sv.name===r.name?"selected":""}>${r.name}</option>`).join("")}</optgroup>`).join("")}</select>${sv?`<button data-a="viewme">↩ Moi</button>`:""}</div>${sv?`<div style="color:#ffd23f;font-size:13px;margin-bottom:8px">Vue de ${roleLabel(sv)}. Aperçu sur ton téléphone : aucune action n'est envoyée à la personne, sa progression est séparée de la tienne.</div>`:""}`:"";
+ $("#app").innerHTML=nv+vb+m[S.tab]()+drawer();
+ markTbv($("#app"));
+ document.documentElement.style.setProperty("--ac",S.tab==="show"?(COL[tb(S.cur).th]):"#cfd3e0");
+ save();
+}
+function vAuth(){
+ if(!AUTH&&S.role){AUTH={step:"pw",key:S.role.type+"|"+S.role.name,err:""};}
+ const st=`<div class="sync${SYNC.ok===false?" off":""}">${SYNC.ok===false?"📴":"🟢"} ${SYNC.msg||"Vérification…"}</div>`;
+ const hero=`<div class="hero"><div class="hl">🦄</div><h1>Bal des Licornes</h1><p>High Club · le déroulé de la soirée, pour toute l'équipe</p></div>`;
+ if(!AUTH||AUTH.step==="pick")return hero+`<div class="steps"><span><b>1</b> Ton nom</span><span><b>2</b> Ton mot de passe</span><span><b>3</b> Ton déroulé</span></div>${st}<input class="inp" id="srch" type="search" placeholder="🔍 Cherche ton nom" autocomplete="off">`+ROLES.map(g=>`<div class="grp"><h3>${g[0]} · ${g[1].length}</h3><div class="grid">${g[1].map(r=>`<button class="rb" data-nm="${esc(r.name.toLowerCase())}" data-a="who:${r.type}|${r.name}">${r.name}</button>`).join("")}</div></div>`).join("")+`<p class="foot">Une fois connecté, tout reste sur ton téléphone : plus besoin d'internet pour suivre la soirée.<br>Mot de passe oublié ? Demande à Wess, Jeff ou Nico.</p><button class="chip" data-a="refresh">↻ Vérifier les mises à jour</button>`;
+ const k=AUTH.key,nm=k.split("|")[1],has=!!S.users[k],cc=canCreate(k),none=!has&&!cc;
+ const msg=none?(S.hasCfg?"Aucun mot de passe n'est défini pour toi. Demande-le à Wess, Jeff ou Nico.":(DB?"Aucune version n'est encore publiée. Reviens plus tard ou demande à l'orga.":"Hors ligne : ouvre le lien en ligne une première fois pour recevoir ta version et ton mot de passe.")):"";
+ return hero+`<div class="card who"><div style="color:var(--mut);font-size:13px">Tu es</div><div style="font-size:26px;font-weight:800">${esc(nm)}</div><div style="color:var(--mut)">${esc(keyLabel(k).split(" · ")[0])}</div></div>${st}
+ ${none?`<div class="card">${msg}</div>`:`<h3>${cc?"Crée ton mot de passe":"Ton mot de passe"}</h3>${cc?"":`<div style="color:var(--mut);font-size:12px;margin:-4px 0 6px">Premier accès : entre le mot de passe temporaire donné par l'orga. Ensuite tu choisiras le tien.</div>`}<input id="pw1" type="password" autocomplete="off" placeholder="Mot de passe" class="inp">${cc?`<input id="pw2" type="password" autocomplete="off" placeholder="Confirmer le mot de passe" class="inp">`:""}
+ <label class="row"><span>Rester connecté sur ce téléphone</span><input type="checkbox" id="stay" ${S.stay?"checked":""}></label>
+ ${AUTH.err?`<div class="warn" style="margin:8px 0">${AUTH.err}</div>`:""}
+ <button class="big go" data-a="login">${cc?"Créer et entrer":"Entrer"}</button>`}
+ ${EDITOR&&ORGA3.includes(nm)?`<button class="big ghost" data-a="edlogin">Entrer avec ${WEB?"le jeton de publication":"mon compte Claude (éditeur)"}</button>`:""}
+ <button class="big ghost" data-a="authback">← Ce n'est pas moi</button>`;}
+
+const V=x=>x===TBC?`<span class="warn">${TBC}</span>`:x;
+function markTbv(root){
+ try{const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>(n.nodeValue.indexOf(TBV)>=0&&!/^(TEXTAREA|SCRIPT|STYLE|OPTION|TITLE)$/.test(n.parentNode.nodeName)&&!n.parentNode.classList.contains("tbv"))?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
+ const L=[];while(w.nextNode())L.push(w.currentNode);
+ L.forEach(n=>{const parts=n.nodeValue.split(TBV),f=document.createDocumentFragment();parts.forEach((p,i)=>{if(i){const s=document.createElement("span");s.className="tbv";s.textContent=TBV;f.appendChild(s);}if(p)f.appendChild(document.createTextNode(p));});n.parentNode.replaceChild(f,n);});}catch(e){}
+}
+function myRows(r){
+ const o=[];
+ T.forEach(t=>{
+  const h=`<b>T${t.n} · ${t.h}</b>`;
+  if(r.type==="artist"){const x=t.pos.find(p=>p.a.includes(r.name));if(x)o.push(`${h} (${t.da}) : zone départ ${repOf("artist",t)}, position ${x.p} (${isHaut(x.p)?"en hauteur":"au sol"}), ${x.c}, masque ${x.m}. Escorte : ${escOf(t.n,x.p).join(", ")}.`);else if(t.fin)o.push(`${h} : FINALE, tu rejoins Apolleon au centre.`);}
+  else if(r.type==="squire"){const s=sqRole(r.name,t.n),k=slotKind(s);o.push(`${h} : ${slotLabel(s)} · tenue ${tenueOf(t.n)} · zone départ ${repOf("squire",t)}${k==="C"||k==="CG"?` · barres : ${carryTxt(t.n,s)}`:""}.`);}
+  else if(r.type==="dj"){if(t.dj.includes(r.name))o.push(`${h} (${t.da}) : ambiance ${F(t.musAmb)} · transition ${F(t.musTrans)} · lancement ${F(t.mus)}.`);}
+  else if(r.type==="regie"){o.push(`${h} : ambiance ${F(t.lumAmb)} · transition ${F(t.lumTrans)} · lumière ${F(t.light)} · écran ${F(t.ecran)}.`);}
+  else if(["photo","tiktok","videast","team"].includes(r.type)){o.push(`${h} (${t.da}) : cible ${F((t.cible||{})[r.name])} · angle ${F((t.place||{})[r.name])}.`);}
+  else o.push(`${h} (${t.da}) : annonces talkie${t.fin?", escorte d'Apolleon (pos 5), finale":""}.`);
+ });
+ return o;}
+const ROLEDESC={
+ artist:"Zone de départ à ton repère, prêt : costume, masque, maquillage. Un écuyer t'escorte jusqu'au podium, tu fais ton passage, l'écuyer t'aide à descendre. Rien à valider : écoute le talkie.",
+ squire:"Dégagement des podiums du bas : un écuyer pose les cotillons, l'autre distribue les goodies. Trois écuyers escortent les artistes. Rotation à chaque tableau. Tu réponds PRÊT aux appels de Wess.",
+ dj:"Ambiance pendant le dégagement, transition à l'arrivée des artistes, lancement au TOP LANCEMENT TABLEAU. Tu réponds « DJ PRÊT » en premier.",
+ regie:"Lumière et écran : ambiance, transition, lancement. Tu réponds « RÉGIE PRÊT » en deuxième.",
+ photo:"Pour chaque tableau : une cible à couvrir et un angle précis, pour que deux personnes ne soient jamais au même endroit. Pour le reste, liberté.",
+ orga:"Wess pilote au talkie. Jeff, Nico et Fred : missions à valider."};
+function vAvant(){
+ const r=eff(),g=GRP[r.type],I=S.info,rg=repGroup(r.type);
+ let h=`<h2>Avant la soirée</h2><p style="color:var(--mut);font-size:14px">${roleLabel(r)}</p>`;
+ h+=`<div class="card"><h3 style="margin-top:0">🗓 La soirée, de l'ouverture à la fermeture</h3>
+ <div class="row"><span>Ouverture du High</span><b>${V(I.open)}</b></div>
+ <div class="row"><span>Ton arrivée (${GRPN[g]})</span><b>${V(I.arr[g])}</b></div>
+ <div class="row"><span>Lieu de rendez-vous</span><b>${V(I.rdv)}</b></div>
+ <div class="row"><span>Brief + test radio</span><b>${V(I.brief)}</b></div>
+ ${T.map(t=>`<div class="row"><span>${t.h} · Tableau ${t.n}</span><span style="text-align:right">${t.da}<br><span style="color:var(--mut);font-size:12px">ton repère : ${repOf(rg,t)}</span></span></div>`).join("")}
+ <div class="row"><span>Fermeture du High</span><b>${V(I.close)}</b></div></div>`;
+ const tenue={artist:"Le costume de chaque tableau (voir ci-dessous).",squire:"NOIR sur tous les tableaux, ROSE uniquement sur les tableaux PINK (2, 5, 7).",dj:"Tout en noir.",regie:"Tout en noir.",photo:"Tout en noir.",orga:"Tout en noir."}[g];
+ h+=`<div class="card"><h3 style="margin-top:0">👔 Ta tenue</h3>${tenue}${g==="squire"?`<br><span style="color:var(--mut);font-size:13px">${T.map(t=>`T${t.n} ${tenueOf(t.n)}`).join(" · ")}</span>`:""}</div>`;
+ h+=`<div class="card"><h3 style="margin-top:0">🎯 Ton rôle</h3>${ROLEDESC[g]||ROLEDESC.photo}</div>`;
+ h+=`<div class="card"><h3 style="margin-top:0">📋 Tes tableaux</h3>${myRows(r).map(x=>`<div class="row" style="display:block">${x}</div>`).join("")||"Rien pour toi."}</div>`;
+ h+=`<div class="card"><h3 style="margin-top:0">📻 Communication</h3><ul><li>Un seul canal talkie pour tout le monde : écuyers, artistes, orga, make-up.</li><li>Radio + oreillette dès l'arrivée. Test radio au brief.</li><li>Les repères d'heure sont indicatifs : Wess fait avancer en direct. Annonce te concernant : réponds « REÇU ».</li><li>Pas de réseau sur site : une fois connecté, tout reste sur ton téléphone.</li><li>Dans l'appli, un seul geste : marquer chaque tableau terminé. Le reste est une partition à connaître d'avance.</li></ul></div>`;
+ let ex=null;for(const t of T){const c=ctx(r,t);if(!c.off){ex={t,c};break;}}
+ h+=`<div class="card"><h3 style="margin-top:0">🗣 Les mots de Wess${ex?` · ce que tu fais (ex. tableau ${ex.t.n})`:""}</h3><p style="margin-top:0"><b>À TOUS</b> = tout le monde.<br><b>ATTENTION</b> = prépare-toi.<br><b>TOP</b> = exécute.<br><b>STAND-BY</b> = attente.<br><b>REÇU</b> = accusé de réception.<br><b>PRÊT</b> = mise en place confirmée (🔴 : réponse attendue).</p>${KW.map(k=>`<div class="row" style="display:block"><b>« ${k[2]} »</b><br><span style="color:var(--mut);font-size:13px">${k[3]}</span>${ex?(ex.c.st[k[0]]?`<br>👉 ${ex.c.st[k[0]].d}`:`<br><span style="color:var(--mut)">Non concerné. Écoute.</span>`):""}</div>`).join("")}<div class="row" style="display:block"><b>« STAND-BY »</b><br><span style="color:var(--mut);font-size:13px">On attend, personne ne bouge jusqu'à la prochaine annonce.</span></div></div>`;
+ if(r.type==="orga")h+=`<div class="card"><h3 style="margin-top:0">📻 Ma liste d'appels (exemple tableau 1)</h3>${sortCalls(calls(tb(1))).map(callHtml).join("")}<p style="color:var(--mut);font-size:13px">Même enchaînement pour chaque tableau. Détail complet dans l'onglet Radio.</p></div>`;
+ return h;
+}
+function vScript(){
+ const r=eff();
+ let h=`<h2>Mon script de la soirée</h2><p style="color:var(--mut);font-size:14px">${roleLabel(r)} · les repères d'heure sont indicatifs : Wess fait avancer en direct au talkie. Ouvre un tableau pour le lire. 🔴 = réponse PRÊT attendue.</p>`;
+ T.forEach(t=>{
+  const c=ctx(r,t);
+  h+=`<details ${t.n===1?"open":""}><summary>Tableau ${t.n} · ${t.h} · ${t.da}</summary>`;
+  if(c.off){h+=`<p>${c.watch.join("<br>")}</p></details>`;return;}
+  h+=`<h3>👗 À préparer</h3><ul>${c.wear.map(w=>`<li>${w}</li>`).join("")}</ul><h3>👀 À anticiper</h3><ul>${c.watch.map(w=>`<li>${w}</li>`).join("")}</ul><h3>Déroulé</h3>`;
+  h+=relSteps(c).map(k=>{const x=c.st[k];return `<div class="step${x.rd?" rd":""}"><div class="t">${stI(k)} ${stTitle(k,t)}${x.rd?` <span class="rdtag">🔴 PRÊT ATTENDU</span>`:""}</div><div style="margin-top:4px"><span class="tag">Quand</span> ${cueTxt(k,t,r)}</div><div class="d">${x.d}</div><div class="an">⏭ ${x.an}</div></div>`;}).join("");
+  h+=`</details>`;
+ });
+ return h;}
+const RGRP=[["Écuyers dégagement","cl"],["Escortes","es"],["Artistes","ar"],["DJ","dj"],["Régie","rg"],["Médias","md"]];
+const grpOf=(r,t)=>{if(r.type==="squire"){const q=sqRole(r.name,t.n);return slotKind(q)==="E"?"es":"cl";}return ({artist:"ar",dj:"dj",regie:"rg",photo:"md",tiktok:"md",videast:"md",team:"md"})[r.type]||"";};
+function vShow(){
+ const n=S.cur,t=tb(n),role=eff(),c=ctx(role,t),live=role.type==="orga",wess=live&&role.name==="Wess",p=prog(n),g=grpOf(role,t);
+ const cp=(S.cp&&S.cp[n])||0,got=S.ok[n]||{};
+ const pills=`<div class="pills">${T.map(x=>`<button class="pill ${x.n===n?"cur":""} ${prog(x.n).d?"done":""}" data-a="pick:${x.n}">${prog(x.n).d?"✓":x.n}</button>`).join("")}</div>`;
+ let h=pills+`<div class="card hd ${t.th==="strass"?"":t.th}"><h2>TABLEAU ${n} · ${t.h}</h2><p>${t.da}</p></div>`;
+ if(c.off)h+=`<div class="card"><b>Hors tableau</b> · ${c.watch.join(" ")}</div>`;
+ else if(live)h+=`<div class="card"><ul style="margin:0">${c.watch.slice(0,3).map(w=>`<li>${w}</li>`).join("")}</ul></div>`;
+ else h+=`<div class="card"><h3 style="margin-top:0">👗 À préparer</h3><ul>${c.wear.map(w=>`<li>${w}</li>`).join("")}</ul>${c.watch.length?`<h3>👀 À retenir</h3><ul>${c.watch.map(w=>`<li>${w}</li>`).join("")}</ul>`:""}</div>`;
+ h+=`<p style="color:var(--mut);font-size:13px;margin:4px 0">${live?"Tu pilotes au talkie. Touche une phase pour la marquer en cours.":"Wess fait avancer en direct au talkie. Ce qui te concerne est en lumière, le reste est grisé. Les heures sont indicatives."}</p>`;
+ if(!live&&!c.off)h+=`<div class="seg2"><button class="${S.only?"":"on"}" data-a="only:0">Tout le tableau</button><button class="${S.only?"on":""}" data-a="only:1">Pour moi</button></div>`;
+ h+=`<div class="chipsrow">${ORD().map(k=>{const x=c.off?null:c.st[k];return `<button class="pc2${(x||live)?" on":""}${x&&x.rd?" rd":""}" data-a="goph:${k}">${stI(k)}</button>`;}).join("")}</div>`;
+ h+=ORD().map(k=>{
+  const x=c.off?null:c.st[k],mine=!!x||live;
+  if(S.only&&!live&&!c.off&&!x)return "";
+  const cue=x?cueTxt(k,t,role):(live?cueTxt(k,t,role):CUE[k]);
+  const lines=RGRP.map(([l,gg])=>{const cell=recRow(gg,t)[k-1];if(!cell||cell==="—"||(x&&!live&&gg===g))return "";return `<div class="pr"><b>${l}</b> · ${cell}</div>`;}).join("");
+  let chk="";
+  if(wess&&(k===3||k===5)){const L=k===3?readyList(t):posList(t),all=L.every(y=>got[y[0]]);chk=`<div class="chks">${L.map(y=>`<label class="cb"><input type="checkbox" data-chk="ok:${n}:${y[0]}" ${got[y[0]]?"checked":""}> ${y[1]}</label>`).join("")}${all?`<span class="okb">✔ tous</span>`:""}</div>`;}
+  return `<div id="ph${k}" class="ph${mine?" on":" dim"}${x&&x.rd?" rd":""}${cp===k?" cur":""}"><div class="phh"${live?` data-a="cp:${k}"`:""}>${stI(k)} ${stTitle(k,t)}${x&&x.rd?` <span class="rdtag">🔴 PRÊT</span>`:""}<span class="pc">${cue}</span></div>${wess?talk(k,t).map(callHtml).join(""):""}${x&&x.d?`<div class="me">${x.d}</div>`:""}${x&&x.extra?x.extra.map(e=>`<div class="me">+ ${e}</div>`).join(""):""}${chk}${lines}</div>`;
+ }).join("");
+ return h+(p.d?`<div class="card">✅ Tableau ${n} terminé</div><div class="grid"><button class="big ghost" data-a="reset:${n}">Rouvrir</button>${n<T.length?`<button class="big go" data-a="pick:${n+1}">Tableau ${n+1} →</button>`:""}</div>`:`<button class="big ${n<T.length?"go":"ghost"}" data-a="skip">✔ Tableau ${n} terminé${n<T.length?" · suivant":""}</button>`);
+}
+function mediaTxt(t,f){const o=t[f]||{},d=MEDIA.filter(m=>F(o[m])!==TBV);return d.length?d.map(m=>`${m} → ${o[m]}`).join(" · ")+(d.length<MEDIA.length?` · +${MEDIA.length-d.length} ${TBV}`:""):TBV;}
+function recRow(g,t){
+ const n=t.n,cotN=Object.values(carry(n)).flat().length;
+ const aft=["ES1","ES2","ES34"].some(s=>F(t["esc_"+s])===TBV);
+ if(g==="cl")return [`${repOf("squire",t)} · barres ${cotN} · goodies`,`Dégage podiums ${pods(n)} · cotillons posés · goodies`,"Goodies · cotillons en place","Arrière du podium","Artiste devant : passage libre","—","Artiste du bas monte","Tir cotillons","Barres récupérées · pointe · descente"];
+ if(g==="es")return [`${repOf("squire",t)} · artistes prêts`,"Zone départ","🔴 ESCORTE PRÊTE","Escorte → podiums","🔴 EN POSITION","—","—","Zone dégagée",t.fin?"Finale":`Retour loge · suite : ${aft?TBV:"voir fiche"}`];
+ if(g==="ar")return [`${repOf("artist",t)} · zone départ`,"—","—","Escorte → podium","En position (haut : podium non éclairé)","—","Bas : montent","Cotillons",t.fin?"Finale":"Descente · loge"];
+ if(g==="dj")return [`${repOf("dj",t)}`,`Lance ${F(t.musAmb)}`,"🔴 DJ PRÊT","—",`Transition ${F(t.musTrans)}`,"—",`Lance ${F(t.mus)}`,"—","—"];
+ if(g==="rg")return [`${repOf("regie",t)}`,`Ambiance ${F(t.lumAmb)}`,"🔴 RÉGIE PRÊT","—","Podiums 3/4 non éclairés",`${F(t.lumTrans)}`,`${F(t.light)} · écran ${F(t.ecran)}`,"—","—"];
+ if(g==="md")return [`${repOf("media",t)}`,`Angles : ${mediaTxt(t,"place")}`,"—","—","—","—",`Cibles : ${mediaTxt(t,"cible")}`,"—",t.fin?"Finale":"—"];
+ return [`ATTENTION À TOUS · PRÉPARATION · ${repOf("orga",t)}`,"ATTENTION À TOUS · DÉBUT DE TRANSITION · TOP ÉCUYERS","PRÊT ? DJ → Régie → Escortes","ATTENTION / TOP ESCORTES","ATTENTION DJ · RÉGIE · ESCORTES : lancement","ATTENTION / TOP TRANSITION LUMIÈRE","TOP DJ · RÉGIE · LANCEMENT","ATTENTION / TOP COTILLONS","ATTENTION / TOP RETOUR LOGE"];
+}
+function postes(k,t){
+ const rows=[["Écuyers dégagement","cl"],["Escortes","es"],["Artistes","ar"],["DJ","dj"],["Régie","rg"],["Médias","md"]];
+ const L=rows.map(([l,g])=>[l,recRow(g,t)[k-1]]).filter(x=>x[1]&&x[1]!=="—");
+ return L.length?`<div class="postes"><div style="color:var(--mut);font-size:12px;margin:6px 0 2px">Chaque poste à cette phase</div>${L.map(x=>`<div class="pr"><b>${x[0]}</b> · ${x[1]}</div>`).join("")}</div>`:"";}
+function vRecap(){
+ const n=S.recN||1,t=tb(n);
+ const G=[["Écuyers · dégagement","cl"],["Écuyers · escorte","es"],["Artistes","ar"],["DJ","dj"],["Régie","rg"],["Vidéo · photo","md"],["Wess · live","wo"]];
+ return `<h2>Récap · tableau ${n}</h2><p style="color:var(--mut);font-size:13px">${t.h} · ${t.da}. Repères indicatifs, Wess fait avancer en direct. 🔴 = réponse PRÊT.</p>
+ <div class="pills">${T.map(x=>`<button class="pill ${x.n===n?"cur":""}" data-a="recn:${x.n}">${x.n}</button>`).join("")}</div>
+ <div style="overflow-x:auto"><table class="rec"><tr><th></th>${ORD().map(k=>`<th>${stI(k)} ${stTitle(k,t)}</th>`).join("")}</tr>
+ ${G.map(([l,g])=>{const row=recRow(g,t);return `<tr><td><b>${l}</b></td>${ORD().map(k=>`<td class="${String(row[k-1]).startsWith("🔴")?"rdc":""}">${row[k-1]}</td>`).join("")}</tr>`;}).join("")}</table></div>`;
+}
+
+function mine(t){
+ const r=eff();
+ if(r.type==="artist"){const x=t.pos.find(p=>p.a.includes(r.name));return x?x.p:null;}
+ return null;
+}
+function vTab(){
+ return `<h2>Tableaux</h2>`+T.map(t=>{
+  const r=eff();let tag="";
+  if(r.type==="artist"){const x=t.pos.find(p=>p.a.includes(r.name));tag=x?`<span class="tag">pos ${x.p}</span>`:`<span class="tag">-</span>`;}
+  if(r.type==="squire"){const s=sqRole(r.name,t.n);tag=`<span class="tag">${slotLabel(s)}</span>`;}
+  if(r.type==="dj")tag=t.dj.includes(r.name)?`<span class="tag">aux platines</span>`:`<span class="tag">-</span>`;
+  return `<details><summary>T${t.n} · ${t.h} · ${t.da} ${tag}</summary>
+  <p>DJ : ${t.dj.join(" B2B ")}${t.mus?` · ♪ ${t.mus}`:""}<br>Lumière : ${t.light||"-"}<br>Écran : ${F(t.ecran)}<br>Tenue écuyers : <b>${tenueOf(t.n)}</b></p>
+  <table><tr><th>Pos</th><th>Artiste</th><th>Costume</th><th>Masque</th><th>Cotillon</th><th>Escorte</th></tr>
+  ${t.pos.map(p=>`<tr class="${r.type==="artist"&&p.a.includes(r.name)?"me":""}"><td>${p.p}</td><td>${p.a.join("<br>")}</td><td>${p.c}</td><td>${p.m}</td><td>${bs(p.b)}</td><td>${escOf(t.n,p.p).join(", ")}</td></tr>`).join("")}</table>
+  <p style="color:var(--mut);font-size:13px">Vidage : ${slots(t.n).filter(s=>s[0]==="C").map(s=>`${slotLabel(s)} : ${ga(t.n,s)}`).join(" · ")}</p></details>`;}).join("");
+}
+
+function vEsc(){
+ return `<h2>Écuyers</h2><p style="color:var(--mut);font-size:14px">4 écuyers : dégagement, goodies, cotillons. 3 écuyers : escorte. Modifiable ici. Partage de la config via ⚙.</p>`+T.map(t=>{
+  const used=slots(t.n).map(s=>ga(t.n,s)),dup=used.length!==new Set(used).size;
+  return `<div class="card"><b>T${t.n} · ${t.h} · ${TH[t.th]}</b>
+  <div class="row"><span>Tenue</span><select ${CE()} data-sel="ten:${t.n}">${["NOIR","ROSE"].map(o=>`<option ${tenueOf(t.n)===o?"selected":""}>${o}</option>`).join("")}</select></div>
+  ${slots(t.n).map(s=>`<div class="row"><span>${slotLabel(s)}</span><select ${CE()} data-sel="asg:${t.n}:${s}">${SQ.map(q=>`<option ${ga(t.n,s)===q?"selected":""}>${q}</option>`).join("")}</select></div>`).join("")}
+  ${has5(t.n)?`<div class="row"><span>Escorte position 5</span><b>${ESC_ORGA.join(", ")}</b></div>`:""}
+  ${dup?`<div class="warn">⚠ Un écuyer est affecté deux fois</div>`:""}</div>`;}).join("");
+}
+
+function need(t){const o={};t.pos.forEach(p=>o[p.b[1]]=(o[p.b[1]]||0)+p.b[0]);return o;}
+function vCot(){
+ const tot={argent:0,rose:0,rainbow:0};T.forEach(t=>{const o=need(t);for(const k in o)tot[k]+=o[k];});
+ const nm={argent:"Argent",rose:"Rose",rainbow:"Multicolor"};
+ return `<h2>Cotillons</h2><div class="card">`+Object.keys(tot).map(k=>{const st=STOCK[k].reduce((a,x)=>a+x[1],0);return `<div class="row"><span><b>${nm[k]}</b> : besoin ${tot[k]} / stock ${st}</span><b class="${st<tot[k]?"warn":""}" style="color:${st<tot[k]?"":"var(--ok)"}">${st>=tot[k]?"OK":"MANQUE "+(tot[k]-st)}</b></div><div style="color:var(--mut);font-size:12px">${STOCK[k].map(x=>`${x[0]} : ${x[1]}`).join(" · ")}</div>`;}).join("")+`<p style="color:var(--mut);font-size:13px">Argent : seulement 24 en 60 cm, il faut donc piocher dans les 80 cm, serpents et étoiles. Guirlande/serpentin 40 cm : 1 en stock, non prévu.</p></div><h3>Qui prend quoi, par tableau</h3><p style="color:var(--mut);font-size:13px">Cotillons sur tous les podiums (1 à 4, plus 5 au tableau 8). Portés et tirés par les écuyers de dégagement : équipe podium 1 → podiums 1 et 3, équipe podium 2 → podiums 2 et 4, équipe podium 5 → podium 5. Case cochée = préparés.</p>`+T.map(t=>{const cr=carry(t.n);const mine=eff().type==="squire"?sqRole(eff().name,t.n):null;return `<div class="card"><label class="row" style="border:0"><b>T${t.n} · ${t.h} · ${TH[t.th]} · ${Object.values(cr).flat().length} cotillons</b><input type="checkbox" data-chk="cot:${t.n}" ${S.cot[t.n]?"checked":""}></label>${t.pos.map(p=>{const who=Object.keys(cr).filter(q=>cr[q].some(x=>x.pod===p.p)).map(q=>ga(t.n,q));return `<div class="row"><span><b>Podium ${p.p}</b></span><span style="text-align:right">${bs(p.b)} · ${who.join(", ")}</span></div>`;}).join("")}<div style="color:var(--mut);font-size:12px;margin-top:6px">Par écuyer</div>${Object.keys(cr).map(s=>`<div class="row" style="${s===mine?"background:#2a2a14":""}"><span><b>${ga(t.n,s)}</b> <span style="color:var(--mut)">(${slotLabel(s)})</span></span><span style="text-align:right">${cr[s].length} · ${cg(cr[s])}</span></div>`).join("")}</div>`;}).join("")+`<p style="color:var(--mut);font-size:13px">4 étoiles argent 40 cm restent en réserve.</p>`;
+}
+
+function vRad(){
+ const t=tb(S.cur);
+ const chk=["Batteries chargées + chargeur de secours","Oreillettes branchées","Tout le monde sur le même canal","Test de chaîne : Wess appelle chacun, réponse « reçu »"];
+ return `<h2>Radio</h2><div class="card"><b>Phrase de test</b><div class="talk">📻 « Test radio, ici Wess, me recevez-vous ? »</div></div>
+ <h3>Check matériel</h3>${chk.map((c,i)=>`<label class="row"><span>${c}</span><input type="checkbox" data-chk="rad:${i}" ${S.radio[i]?"checked":""}></label>`).join("")}
+ <h3>Test par personne (même canal pour tous)</h3>${roster().map(g=>`<details><summary>${g[0]}</summary>${g[1].map(x=>`<label class="row"><span>${x}</span><input type="checkbox" data-chk="ros:${g[0]}-${x}" ${S.ros[g[0]+"-"+x]?"checked":""}></label>`).join("")}</details>`).join("")}
+ <h3>Liste d'appels talkie · tableau ${t.n}</h3><div class="pills">${T.map(x=>`<button class="pill ${x.n===t.n?"cur":""}" data-a="pickr:${x.n}">${x.n}</button>`).join("")}</div>
+ <div class="card">${sortCalls(calls(t)).map(c=>`<div style="color:var(--mut);font-size:12px;margin-top:8px">Étape ${c[0]} · ${stTitle(c[0],t)}</div>${callHtml(c)}`).join("")}</div>`;
+}
+
+function vSet(){
+ const inp=(l,k,v)=>`<div class="row"><span>${l}</span><input data-inp="${k}" value="${String(v).replace(/"/g,"&quot;")}" style="width:55%;font:inherit;background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px"></div>`;
+ return `<h2>Réglages</h2><div class="card"><b>Version</b><p style="margin:6px 0 0;color:var(--mut);font-size:13px">Version enregistrée sur ce téléphone : <b>${verTxt()}</b>. ${esc(SYNC.msg||"")}<br>Pour recevoir une mise à jour : déconnecte-toi puis reconnecte-toi, en ligne.</p></div>
+ ${canView(S.role)?`<div class="card"><b>Infos pratiques</b><p style="color:var(--mut);font-size:13px">Affichées dans « Ma soirée ». À publier depuis le back office.</p>${inp("Ouverture du High","open",S.info.open)}${inp("Fermeture du High","close",S.info.close)}${inp("Lieu de rendez-vous","rdv",S.info.rdv)}${inp("Brief + test radio","brief",S.info.brief)}${Object.keys(GRPN).map(k=>inp("Arrivée "+GRPN[k],"arr."+k,S.info.arr[k])).join("")}</div>`:""}
+ <div class="card"><b>Mon mot de passe</b><p style="color:var(--mut);font-size:13px;margin:4px 0">Choisis ton propre mot de passe pour ce téléphone.</p><input id="cp0" type="password" autocomplete="off" class="inp" placeholder="Mot de passe actuel"><input id="cp1" type="password" autocomplete="off" class="inp" placeholder="Nouveau mot de passe"><input id="cp2" type="password" autocomplete="off" class="inp" placeholder="Confirmer"><button class="big ghost" data-a="chpw2">Changer mon mot de passe</button><button class="big ghost" data-a="tutoopen">❓ Revoir le tuto</button></div>
+ <div class="card"><button class="big ghost" data-a="chrole">Se déconnecter</button><button class="big ghost" data-a="resetall" style="color:var(--bad)">Remettre la progression à zéro</button></div>
+ <button class="big" data-a="tab:home">Retour</button>`;
+}
+
+/* ============ ACTIONS ============ */
+document.addEventListener("click",async e=>{
+ const el=e.target.closest("[data-a]");if(!el)return;
+ const [a,...r]=el.dataset.a.split(":"),v=r.join(":");const n=S.cur;
+ if(a==="goph"){const e2=document.getElementById("ph"+v);if(e2)e2.scrollIntoView({behavior:"smooth",block:"start"});return;}
+ if(a==="who"){AUTH={step:"pw",key:v,err:""};}
+ else if(a==="authback"){S.role=null;S.view=null;AUTH={step:"pick"};}
+ else if(a==="refresh"){await syncConfig(true);toast(SYNC.msg);}
+ else if(a==="login"){
+  const k=AUTH.key,[ty,nm]=k.split("|"),p1=$("#pw1")?$("#pw1").value:"";let okk=false;
+  await syncConfig(true);
+  const wasBoot=canCreate(k);
+  if(S.users[k]){const o=S.own[k],uv=S.users[k].v||0;if(o&&o.at>=uv){if(await verify(o.s+p1,o.h))okk=true;else AUTH.err="Mot de passe incorrect.";}else{if(o)delete S.own[k];if(await verify(S.users[k].s+p1,S.users[k].h))okk=true;else AUTH.err="Mot de passe incorrect.";}}
+  else if(canCreate(k)){const p2=$("#pw2")?$("#pw2").value:"";
+   if(p1.length<4)AUTH.err="4 caractères minimum.";
+   else if(p1!==p2)AUTH.err="Les deux mots de passe sont différents.";
+   else{await setPw(k,p1);okk=true;}}
+  else AUTH.err="Aucun mot de passe défini pour toi.";
+  if(okk){S.role={type:ty,name:nm};S.view=null;S.stay=$("#stay")?$("#stay").checked:false;setUnl(true);S.tab="home";S.cur=firstOpen();AUTH=null;S.askpw=!wasBoot&&needOwn(k);S.tutoOpen=!S.tutoDone[k];S.tutoI=0;}
+ }
+ else if(a==="edlogin"){const [ty,nm]=AUTH.key.split("|");if(EDITOR&&ORGA3.includes(nm)){await syncConfig(true);S.role={type:ty,name:nm};S.view=null;S.stay=false;setUnl(true);S.tab="home";S.cur=firstOpen();AUTH=null;S.askpw=false;S.tutoOpen=!S.tutoDone[ty+"|"+nm];S.tutoI=0;}}
+ else if(a==="publish"){await publishCfg(false);}
+ else if(a==="forcepub"){await publishCfg(true);}
+ else if(a==="reloadpub"){S.dirty=false;PUBCONFLICT=false;await syncConfig(true);toast(DB?"Version publiée rechargée.":"Hors ligne.");}
+ else if(a==="bpw"&&canView(S.role)){await setPw(v,genPw());}
+ else if(a==="bpwall"&&canView(S.role)){for(const r of ROLES.flatMap(g=>g[1])){const k=r.type+"|"+r.name;if(!S.pwPlain[k])await setPw(k,genPw());}toast("Mots de passe générés. Publie pour les appliquer.");}
+ else if(a==="bosec"){S.boSec=v;if(v==="comptes")loadPw();}
+ else if(a==="stmove"){S.dirty=true;const [pos,d]=v.split(":").map(Number),o=ORD().slice(),j=pos-1+d;if(j>=0&&j<7){[o[pos-1],o[j]]=[o[j],o[pos-1]];S.order=o;}}
+ else if(a==="streset"){S.dirty=true;S.stepOv={};S.order=null;}
+ else if(a==="ovrdel"){S.dirty=true;delete S.ovr[v];}
+ else if(a==="calldel"){S.dirty=true;delete S.callOvr[v];}
+ else if(a==="addpos"){S.dirty=true;const t=editT(+v);if(t.pos.length<6)t.pos.push({p:t.pos.length+1,a:[],c:"",m:"-",b:[1,"argent"]});}
+ else if(a==="delpos"){S.dirty=true;const t=editT(+v);if(t.pos.length>4)t.pos.pop();}
+ else if(a==="tvreset"){S.dirty=true;delete S.tov[v];delete S.shotsOv[v];}
+ else if(a==="addp"&&canView(S.role)){const el=document.getElementById("tm_"+v),nm=el?el.value.trim():"";const L=teamArr(v);
+  if(!nm)toast("Entre un nom.");else if(L.includes(nm))toast("Déjà dans la liste.");else{S.team=S.team||{};S.team[v]=[...L,nm];S.dirty=true;toast(nm+" ajouté. Génère son mot de passe dans Comptes.");}}
+ else if(a==="delp"&&canView(S.role)){const g=v.split(":")[0],nm=v.split(":").slice(1).join(":");two(v,"Appuie encore pour supprimer "+nm+".",()=>{S.team=S.team||{};S.team[g]=teamArr(g).filter(x=>x!==nm);S.dirty=true;toast(nm+" supprimé.");});}
+ else if(a==="addtab"&&canView(S.role)){S.tcount=T.length+1;S.boN=S.tcount;S.dirty=true;toast("Tableau "+S.tcount+" ajouté.");}
+ else if(a==="deltab"&&canView(S.role)){if(T.length<2)toast("Il faut au moins un tableau.");else two("tab","Appuie encore pour supprimer le dernier tableau ("+T.length+").",()=>{const last=T.length;delete S.tov[last];S.tcount=last-1;S.boN=Math.min(S.boN||1,S.tcount);S.dirty=true;toast("Tableau "+last+" supprimé.");});}
+ else if(a==="addxl"&&canView(S.role)){const t=$("#xl_t").value.trim();if(!t)toast("Écris la consigne.");else{S.xline=S.xline||[];const nn=$("#xl_n").value;S.xline.push({n:nn==="*"?"*":+nn,k:+$("#xl_k").value,g:$("#xl_g").value,text:t});S.dirty=true;toast("Consigne ajoutée.");}}
+ else if(a==="delxl"&&canView(S.role)){two("xl"+v,"Appuie encore pour supprimer.",()=>{S.xline.splice(+v,1);S.dirty=true;});}
+ else if(a==="addxc"&&canView(S.role)){const t=$("#xc_t").value.trim();if(!t)toast("Écris le texte de l'appel.");else{S.xcall=S.xcall||[];const nn=$("#xc_n").value,rp=$("#xc_r").value.trim();S.xcall.push({n:nn==="*"?"*":+nn,k:+$("#xc_k").value,type:$("#xc_y").value,text:t,reply:rp});S.dirty=true;toast("Appel ajouté.");}}
+ else if(a==="delxc"&&canView(S.role)){two("xc"+v,"Appuie encore pour supprimer.",()=>{S.xcall.splice(+v,1);S.dirty=true;});}
+ else if(a==="savepw"){const k=S.role.type+"|"+S.role.name,p1=$("#np1").value,p2=$("#np2").value;
+  if(p1.length<4)S.npErr="4 caractères minimum.";else if(p1!==p2)S.npErr="Les deux mots de passe sont différents.";
+  else{const salt=rnd();S.own[k]={s:salt,h:await hash(salt+p1),at:Date.now()};S.askpw=false;S.npErr="";toast("Mot de passe enregistré sur ce téléphone.");}}
+ else if(a==="skippw"){const k=S.role.type+"|"+S.role.name;S.skip[k]=(S.users[k]&&S.users[k].v)||0;S.askpw=false;S.npErr="";}
+ else if(a==="chpw2"){const k=S.role.type+"|"+S.role.name,c0=$("#cp0").value,c1=$("#cp1").value,c2=$("#cp2").value,o=S.own[k],u=S.users[k];let ok=false;
+  if(o&&o.at>=((u&&u.v)||0))ok=await verify(o.s+c0,o.h);else if(u)ok=await verify(u.s+c0,u.h);
+  if(!ok)toast("Mot de passe actuel incorrect.");else if(c1.length<4)toast("4 caractères minimum.");else if(c1!==c2)toast("Les deux mots de passe sont différents.");
+  else{const salt=rnd();S.own[k]={s:salt,h:await hash(salt+c1),at:Date.now()};toast("Mot de passe changé sur ce téléphone.");}}
+ else if(a==="tutoopen"){S.tutoOpen=true;S.tutoI=0;S.menu=false;}
+ else if(a==="tutonext"){S.tutoI=(S.tutoI||0)+1;}
+ else if(a==="tutoprev"){S.tutoI=Math.max(0,(S.tutoI||0)-1);}
+ else if(a==="tutoskip"){S.tutoOpen=false;S.tutoDone[S.role.type+"|"+S.role.name]=true;}
+ else if(a==="ghsave"&&canView(S.role)){const o=$("#gh_o").value.trim(),r=$("#gh_r").value.trim(),t=$("#gh_t").value.trim();const old=ghRead();
+  try{localStorage.setItem(GHK,JSON.stringify({owner:o,repo:r,tok:t||old.tok||""}));}catch(e){}
+  EDITOR=!!getTok();toast(EDITOR?"Publication prête sur ce téléphone.":"Jeton manquant.");}
+ else if(a==="ghtest"&&canView(S.role)){try{const g=await ghApi("GET");toast(g.status===200?"Connexion OK : tu peux publier.":g.status===404?"Dépôt trouvé, config.json absent.":g.status===401||g.status===403?"Jeton refusé (droits Contents : Read and write).":"GitHub "+g.status);}catch(e){toast("Échec : "+e.message);}}
+ else if(a==="ghdel"&&canView(S.role)){const o=ghRead();try{localStorage.setItem(GHK,JSON.stringify({owner:o.owner,repo:o.repo,tok:""}));}catch(e){}EDITOR=false;toast("Jeton retiré.");}
+ else if(a==="bpwreset"&&canView(S.role)){if(DELC==="pwall"){DELC=null;const me=S.role.type+"|"+S.role.name;for(const r of ROLES.flatMap(g=>g[1])){const k=r.type+"|"+r.name;if(k!==me)await setPw(k,genPw());}toast("Tous les mots de passe sont régénérés. Publie pour les appliquer.");}else{DELC="pwall";toast("Appuie encore pour tout régénérer (sauf le tien).");setTimeout(()=>{if(DELC==="pwall"){DELC=null;render();}},4000);}}
+ else if(a==="mode"){S.mode=v;S.tab=v==="guide"?"avant":"show";}
+ else if(a==="viewme"){S.view=null;S.cur=firstOpen();}
+ else if(a==="chrole"){S.menu=false;setUnl(false);S.stay=false;S.role=null;S.view=null;AUTH={step:"pick"};AUTHSYNC=false;}
+ else if(a==="tab"){S.tab=v;S.menu=false;if(v==="bo")loadPw();}
+ else if(a==="pick"){S.cur=+v;S.tab="show";}
+ else if(a==="pickr"){S.cur=+v;}
+ else if(a==="recn"){S.recN=+v;}
+ else if(a==="cp"){S.cp=S.cp||{};S.cp[n]=(S.cp[n]===+v?0:+v);}
+ else if(a==="menu"){S.menu=!S.menu;}
+ else if(a==="only"){S.only=v==="1";}
+ else if(a==="launch")setP(n,{l:1,s:1,d:0});
+ else if(a==="ok"){const p=prog(n),R=relSteps(ctx(eff(),tb(n)));p.s++;if(p.s>R.length){p.d=1;p.s=R.length;}setP(n,p);if(navigator.vibrate)navigator.vibrate(40);window.scrollTo(0,0);}
+ else if(a==="back"){const p=prog(n);p.s=+v;p.d=0;setP(n,p);}
+ else if(a==="skip"){setP(n,{l:1,s:1,d:1});if(n<T.length)S.cur=n+1;}
+ else if(a==="reset"){if(S.pt[pk()])delete S.pt[pk()][+v];delete S.ok[+v];}
+ else if(a==="resetall"){if(RESETC){S.pt[pk()]={};S.cur=1;S.tab="show";RESETC=false;toast("Progression remise à zéro.");}else{RESETC=true;toast("Appuie encore pour confirmer.");setTimeout(()=>{RESETC=false;},4000);}}
+ render();
+});
+/* ============ BACK OFFICE ============ */
+const genPw=()=>{const c="ABCDEFGHJKMNPQRSTUVWXYZ23456789",a=new Uint32Array(6);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(a);else for(let i=0;i<6;i++)a[i]=Math.random()*4294967296;return [...a].map(x=>c[x%c.length]).join("");};
+const CE=()=>canView(S.role)?"":"disabled";
+const esc=x=>String(x==null?"":x).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+function applyAll(){
+ const tm=Object.assign({},TEAM0,S.team||{});
+ SQ.length=0;SQ.push(...tm.sq);DJS.length=0;DJS.push(...tm.dj);PHOTO.length=0;PHOTO.push(...tm.photo);TIKTOK.length=0;TIKTOK.push(...tm.tiktok);VID.length=0;VID.push(...tm.videast);fillMedia();
+ const cnt=(S.tcount&&S.tcount>0)?S.tcount:T0.length;
+ T.length=0;T0.forEach(x=>T.push(JSON.parse(JSON.stringify(x))));
+ while(T.length<cnt){const n=T.length+1,pv=T[n-2],hh=parseH(pv&&pv.h);T.push({n,h:hh===null?TBV:fmtH(hh+30),th:"strass",da:TBV,mus:"",light:"",ecran:"",dj:DJS.length?[DJS[0]]:[],pos:[1,2,3,4].map(p=>({p,a:[],c:"",m:"-",b:[1,"argent"]}))});}
+ T.length=cnt;
+ Object.keys(S.tov).forEach(n=>{if(+n<=cnt)T[n-1]=JSON.parse(JSON.stringify(S.tov[n]));});
+ Object.keys(SHOTS0).forEach(n=>{const a=(S.shotsOv[n]||SHOTS0[n]).slice();if(!a.length)a.push(TBV);SHOTS[n]=a;});
+ if(S.cur>cnt)S.cur=cnt;if(S.boN>cnt)S.boN=cnt;if(S.recN>cnt)S.recN=cnt;
+ buildRoles();
+}
+function editT(n){if(!S.tov[n])S.tov[n]=JSON.parse(JSON.stringify(T[n-1]));return S.tov[n];}
+const BOSEC=[["valider","À valider"],["controles","Contrôles"],["comptes","Comptes"],["etapes","Phases"],["actions","Textes"],["appels","Appels"],["tab","Tableaux"],["equipe","Équipe"],["gen","Général"]];
+const boSty='style="width:62%;font:inherit;background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px"';
+const selTab=()=>`<select data-bo="sel:boN">${T.map(x=>`<option value="${x.n}" ${x.n===(S.boN||1)?"selected":""}>Tableau ${x.n} · ${x.h}</option>`).join("")}</select>`;
+function pubBanner(){
+ const st=S.dirty?`<b style="color:#ffd23f">Brouillon non publié</b>`:`<b style="color:var(--ok)">À jour</b>`;
+ return `<div class="card"><div class="row" style="border:0"><span>Version publiée : <b>${verTxt()}</b> · en ligne : <b>${DB?(REMOTEV||"aucune"):"hors ligne"}</b></span>${st}</div>
+ ${PUBCONFLICT?`<div class="warn" style="margin:6px 0">Une version plus récente (${REMOTEV}) a été publiée par quelqu'un d'autre. Recharge-la (ton brouillon sera perdu) ou force ta publication.</div><div class="grid"><button class="big ghost" data-a="reloadpub">Recharger la version publiée</button><button class="big ghost" data-a="forcepub">Publier quand même</button></div>`:`<div class="grid"><button class="big go" data-a="publish" ${EDITOR&&DB?"":"disabled"}>▲ Publier la mise à jour</button><button class="big ghost" data-a="reloadpub">Annuler mes modifs</button></div>`}
+ <p style="color:var(--mut);font-size:13px;margin:6px 0 0">${EDITOR?"Les téléphones reçoivent la version publiée quand la personne se déconnecte puis se reconnecte (en ligne). Ensuite tout fonctionne sans internet.":(WEB?"Lecture seule : ajoute le jeton de publication (Général).":"Lecture seule : publier demande un compte Claude éditeur.")}</p></div>`;
+}
+function vBO(){
+ if(!canView(S.role))return `<h2>Back office</h2><p>Accès réservé à Wess, Jeff et Nico.</p>`;
+ const sec=S.boSec||"valider";
+ return `<h2>🛠 Back office</h2>`+pubBanner()+`<div class="pills" style="flex-wrap:wrap">${BOSEC.map(x=>`<button class="chip" style="${sec===x[0]?"background:var(--tx);color:#0b0b12":""}" data-a="bosec:${x[0]}">${x[0]==="valider"?x[1]+" ("+tbvItems().length+")":x[1]}</button>`).join("")}</div>`+({valider:boValider,controles:boControles,comptes:boComptes,etapes:boEtapes,actions:boActions,appels:boAppels,tab:boTab,equipe:boEquipe,gen:boGen}[sec]||boValider)();
+}
+
+function boComptes(){
+ const rows=ROLES.flatMap(g=>g[1]).map(r=>{const k=r.type+"|"+r.name,pw=S.pwPlain[k]||"",has=!!S.users[k];
+  return `<div class="row"><span><b>${r.name}</b> <span style="color:var(--mut);font-size:12px">${roleLabel(r).split(" · ")[0]}</span></span><span style="display:flex;gap:6px;align-items:center"><input data-bo="pw:${k}" value="${esc(pw)}" placeholder="${has?"(défini)":"aucun"}" style="width:110px;font:inherit;font-family:monospace;background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px"><button class="chip" data-a="bpw:${k}">🎲</button></span></div>`;}).join("");
+ return `<p style="color:var(--mut);font-size:13px">Chaque personne reçoit un mot de passe TEMPORAIRE défini ici. À sa première connexion, elle choisit le sien (enregistré sur son téléphone). Si tu modifies ou génères un mot de passe ici puis tu publies, il remplace celui qu'elle avait choisi : elle utilise le nouveau, puis rechoisit le sien. La liste en clair n'est visible que par les comptes éditeurs.${EDITOR?"":" Connecte-toi avec un compte éditeur pour les voir."}</p><button class="big ghost" data-a="bpwall">Générer les mots de passe manquants</button><button class="big ghost" data-a="bpwreset">Tout régénérer (sauf le mien)</button>${rows}`;
+}
+function boEtapes(){
+ return `<p style="color:var(--mut);font-size:13px">Ordre, icône, titre et moment (« Quand ») des 7 étapes, pour tous les rôles. Les textes d'action de chaque rôle se modifient dans « Actions ».</p>`+ORD().map((k,i)=>`<div class="card"><div class="row" style="border:0"><b>${i+1}. étape ${k}</b><span style="display:flex;gap:6px"><button class="chip" data-a="stmove:${i+1}:-1">↑</button><button class="chip" data-a="stmove:${i+1}:1">↓</button></span></div><input class="inp" data-bo="sti:${k}" value="${esc(stI(k))}" style="width:70px;display:inline-block"> <input class="inp" data-bo="stt:${k}" value="${esc(stT(k))}" style="width:calc(100% - 80px);display:inline-block"><div style="color:var(--mut);font-size:12px">Moment (« Quand »)</div><input class="inp" data-bo="stc:${k}" value="${esc((S.stepOv[k]&&S.stepOv[k].cue)||CUE[k])}"></div>`).join("")+`<button class="big ghost" data-a="streset">Rétablir étapes et ordre par défaut</button>`;
+}
+function boActions(){
+ const n=S.boN||1,t=tb(n),who=S.boWho||"artist|Jonathan",[ty,nm]=who.split("|"),role={type:ty,name:nm};
+ const sel2=`<select data-bo="sel:boWho">${ROLES.map(g=>`<optgroup label="${g[0]}">${g[1].map(r=>{const v=r.type+"|"+r.name;return `<option value="${v}" ${v===who?"selected":""}>${r.name}</option>`;}).join("")}</optgroup>`).join("")}</select>`;
+ const sel3=`<select data-bo="sel:boScope"><option value="one" ${S.boScope!=="all"?"selected":""}>Ce tableau seulement</option><option value="all" ${S.boScope==="all"?"selected":""}>Tous les tableaux (même rôle)</option></select>`;
+ let h=`<p style="color:var(--mut);font-size:13px">Choisis un tableau et une personne, puis modifie le texte exact de chaque étape. Le texte remplace l'action complète (noms et numéros de podium inclus) et s'applique à toutes les personnes du même type de rôle (écuyers : dégagement ou escorte).</p><div class="grid">${selTab()}${sel2}</div><div style="margin:8px 0">${sel3}</div>`;
+ const c=ctx(role,t);
+ if(c.off)return h+`<div class="card">Hors tableau : ${c.watch.join(" ")}</div>`;
+ const rk=roleKey(role,t);
+ return h+ORD().filter(k=>c.st[k]).map((k,i)=>{const has=S.ovr[n+"|"+k+"|"+rk]!=null||S.ovr["*|"+k+"|"+rk]!=null;
+  return `<div class="card"><b>${i+1}. ${stI(k)} ${stT(k)}</b>${has?` <span class="tag">modifié</span>`:""}<textarea data-bo="ovr:${n}:${k}:${rk}">${esc(c.st[k].d)}</textarea>${has?`<button class="chip" data-a="ovrdel:${n}|${k}|${rk}">Rétablir (ce tableau)</button> <button class="chip" data-a="ovrdel:*|${k}|${rk}">Rétablir (tous)</button>`:""}</div>`;}).join("")+xlineBox();
+}
+function boAppels(){
+ const n=S.boN||1,L=calls(tb(n));
+ return `<p style="color:var(--mut);font-size:13px">Phrases talkie du tableau : annonce et réponse attendue.</p>${selTab()}`+L.map((c,i)=>`<div class="card"><span class="tag">Étape ${c[0]} · ${c[1]}</span><input class="inp" data-bo="call:${n}:${i}:t" value="${esc(c[2])}">${c[3]!==undefined?`<div style="color:var(--mut);font-size:12px">Réponse attendue</div><input class="inp" data-bo="call:${n}:${i}:r" value="${esc(c[3])}">`:""}${S.callOvr[n+"|"+i]?`<button class="chip" data-a="calldel:${n}|${i}">Rétablir</button>`:""}</div>`).join("")+xcallBox();
+}
+function boTab(){
+ const n=S.boN||1,t=tb(n);
+ const f=(l,k,v)=>`<div class="row"><span>${l}</span><input data-bo="tf:${n}:${k}" value="${esc(v)}" ${boSty}></div>`;
+ const tot=t.pos.reduce((a,p)=>a+p.b[0],0),pl=(POOL[n]||[]).reduce((a,x)=>a+x[1],0);
+ return `<p style="color:var(--mut);font-size:13px">Données du tableau : heure, DA, musique, lumière, écran, DJ, positions (artistes, costume, masque, cotillons) et priorités photo.</p>${selTab()}<div class="grid"><button class="big ghost" data-a="addtab">+ Nouveau tableau</button><button class="big ghost" data-a="deltab">${DELC==="tab"?"Confirmer ?":"− Dernier tableau"}</button></div>
+ <div class="card">${f("Heure","h",t.h)}${f("DA","da",t.da)}${f("Musique d'ambiance","musAmb",F(t.musAmb))}${f("Transition musicale","musTrans",F(t.musTrans))}${f("Musique de lancement","mus",F(t.mus))}${f("Lumière dégagement","lumAmb",F(t.lumAmb))}${f("Transition lumière","lumTrans",F(t.lumTrans))}${f("Lumière du tableau","light",F(t.light))}${f("Écran","ecran",t.ecran)}
+ <div class="row"><span>Thème</span><select data-bo="tf:${n}:th">${["strass","pink","rainbow"].map(o=>`<option ${t.th===o?"selected":""}>${o}</option>`).join("")}</select></div>
+ <div class="row"><span>Finale (tous au centre)</span><input type="checkbox" data-bo="tf:${n}:fin" ${t.fin?"checked":""}></div>
+ <div class="row"><span>DJ</span><span>${DJS.map(d=>`<label style="margin-right:10px"><input type="checkbox" data-bo="tdj:${n}:${d}" ${t.dj.includes(d)?"checked":""}> ${d}</label>`).join("")}</span></div></div>`+
+ t.pos.map((p,i)=>`<div class="card"><b>Podium ${p.p}</b>
+ <div class="row"><span>Artistes (virgules)</span><input data-bo="tp:${n}:${i}:a" value="${esc(p.a.join(", "))}" ${boSty}></div>
+ <div class="row"><span>Costume</span><input data-bo="tp:${n}:${i}:c" value="${esc(p.c)}" ${boSty}></div>
+ <div class="row"><span>Masque</span><input data-bo="tp:${n}:${i}:m" value="${esc(p.m)}" ${boSty}></div>
+ <div class="row"><span>Cotillons</span><span><input type="number" min="0" data-bo="tp:${n}:${i}:bn" value="${p.b[0]}" style="width:60px;font:inherit;background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px"> <select data-bo="tp:${n}:${i}:bt">${["argent","rose","rainbow"].map(o=>`<option ${p.b[1]===o?"selected":""}>${o}</option>`).join("")}</select></span></div></div>`).join("")+
+ `<div class="card"><b>Après dépôt de l'artiste (escortes)</b>${["ES1","ES2","ES34"].map(s=>f(slotLabel(s),"esc_"+s,F(t["esc_"+s]))).join("")}</div>
+ <div class="card"><b>Médias : cible et angle (deux personnes jamais au même angle)</b>${MEDIA.map(m=>`<div style="margin:6px 0"><b>${m}</b><div class="row"><span>Cible</span><input data-bo="tcible:${n}:${m}" value="${esc(F((t.cible||{})[m]))}" ${boSty}></div><div class="row"><span>Angle</span><input data-bo="tplace:${n}:${m}" value="${esc(F((t.place||{})[m]))}" ${boSty}></div></div>`).join("")}</div>
+ <div class="card"><b>Repères d'heure de ce tableau (minutes avant le lancement, vide = général)</b>${REPG.map(([g,l])=>`<div class="row"><span>${l}</span><input type="number" min="0" data-bo="trep:${n}:${g}" value="${(t.rep&&t.rep[g]!=null)?t.rep[g]:""}" placeholder="${repMin(g,{h:t.h})===undefined?TBV:repMin(g,{h:t.h})}" style="width:80px;font:inherit;background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px"></div>`).join("")}</div>
+ <div class="grid"><button class="big ghost" data-a="addpos:${n}">+ Podium</button><button class="big ghost" data-a="delpos:${n}">− Dernier podium</button></div>
+ ${tot!==pl?`<div class="warn" style="margin:8px 0">Total cotillons : ${tot} (répartition des tailles prévue pour ${pl}). Les cotillons en trop ou en moins sont comptés en taille par défaut.</div>`:""}
+  <button class="big ghost" data-a="tvreset:${n}">Rétablir ce tableau par défaut</button>`;
+}
+async function boChange(el){
+ const [kind,...a]=el.dataset.bo.split(":"),v=el.type==="checkbox"?el.checked:el.value;
+ if(kind==="sel"){S[a[0]]=a[0]==="boN"?+v:v;}
+ else if(kind==="stt"||kind==="sti"||kind==="stc"){const k=+a[0];S.stepOv[k]=S.stepOv[k]||{};S.stepOv[k][{stt:"t",sti:"i",stc:"cue"}[kind]]=v;}
+ else if(kind==="ovr"){const [n,k,rk]=a,key=(S.boScope==="all"?"*":n)+"|"+k+"|"+rk;if(String(v).trim()==="")delete S.ovr[key];else S.ovr[key]=v;}
+ else if(kind==="call"){const [n,i,fl]=a,key=n+"|"+i;S.callOvr[key]=S.callOvr[key]||{};S.callOvr[key][fl]=v;}
+ else if(kind==="tf"){editT(+a[0])[a[1]]=v;}
+ else if(kind==="tdj"){const t=editT(+a[0]);t.dj=t.dj.filter(x=>x!==a[1]);if(v)t.dj.push(a[1]);if(!t.dj.length)t.dj=[a[1]];t.dj.sort((x,y)=>DJS.indexOf(x)-DJS.indexOf(y));}
+ else if(kind==="tp"){const t=editT(+a[0]),p=t.pos[+a[1]],fl=a[2];if(fl==="a")p.a=v.split(",").map(x=>x.trim()).filter(Boolean);else if(fl==="c")p.c=v;else if(fl==="m")p.m=v;else if(fl==="bn")p.b[0]=Math.max(0,parseInt(v)||0);else if(fl==="bt")p.b[1]=v;}
+ else if(kind==="shots"){S.shotsOv[a[0]]=String(v).split("\n").map(x=>x.trim()).filter(Boolean);}
+ else if(kind==="tcible"){const t=editT(+a[0]);t.cible=t.cible||{};t.cible[a.slice(1).join(":")]=v;}
+ else if(kind==="tplace"){const t=editT(+a[0]);t.place=t.place||{};t.place[a.slice(1).join(":")]=v;}
+ else if(kind==="trep"){const t=editT(+a[0]);t.rep=t.rep||{};t.rep[a[1]]=(v===""?null:Number(v));}
+ else if(kind==="rep"){S.rep[a[0]]=(v===""?null:Number(v));}
+ else if(kind==="gen"){S.gen[a[0]]=v;}
+ else if(kind==="pw"){if(String(v).length>=4)await setPw(a[0],String(v));else toast("4 caractères minimum.");}
+ if(kind!=="sel")S.dirty=true;
+ render();
+}
+
+function tbvItems(){
+ const out=[];
+ T.forEach(t=>{const n=t.n,w=`Tableau ${n} · ${t.h}`;
+  const f=(field,label,cx)=>{if(F(t[field])===TBV)out.push({g:w,label,ctx:cx,attr:`data-bo="tf:${n}:${field}"`});};
+  f("musAmb","Musique d'ambiance (dégagement et goodies)","DJ · phase SORTIE ÉCUYERS");
+  f("musTrans","Transition musicale (artistes devant les podiums)","DJ · phases SORTIE ARTISTES et EN POSITION");
+  f("mus","Musique de lancement","DJ · phase LANCEMENT · artistes");
+  f("lumAmb","Lumière pendant le dégagement","Régie · phase SORTIE ÉCUYERS");
+  f("lumTrans","Transition lumière (blackout, focus…)","Régie, Wess · phase LANCEMENT (transition de lumière)");
+  f("light","Lumière du tableau","Régie · phase LANCEMENT");
+  ["ES1","ES2","ES34"].forEach(s=>{if(F(t["esc_"+s])===TBV)out.push({g:w,label:`Après dépôt · ${slotLabel(s)}`,ctx:"Écuyer d'escorte · phase RETOUR LOGE (aider un artiste ou préparer quelque chose)",attr:`data-bo="tf:${n}:esc_${s}"`});});
+  MEDIA.forEach(nm=>{
+   if(F((t.cible||{})[nm])===TBV)out.push({g:w,label:`Cible · ${nm}`,ctx:`${nm} · phase LANCEMENT (qui ou quoi couvrir)`,attr:`data-bo="tcible:${n}:${nm}"`});
+   if(F((t.place||{})[nm])===TBV)out.push({g:w,label:`Angle · ${nm}`,ctx:`${nm} · phase SORTIE ÉCUYERS (angle précis, balcon, VIP derrière le podium 1, bar…)`,attr:`data-bo="tplace:${n}:${nm}"`});});
+ });
+ REPG.forEach(([g,l])=>{if(repMin(g,tb(1))===undefined)out.push({g:"Général",label:`Repère d'heure · ${l} (minutes avant le lancement)`,ctx:"Chacun · phase ZONE DÉPART",attr:`data-bo="rep:${g}"`,num:true});});
+ if(F(S.gen&&S.gen.goodies)===TBV)out.push({g:"Général",label:"Goodies (type, quantité)",ctx:"Écuyers goodies · phases ZONE DÉPART et SORTIE ÉCUYERS",attr:`data-bo="gen:goodies"`});
+ if(F(S.gen&&S.gen.cot34)===TBV)out.push({g:"Général",label:"Cotillons des podiums 3 et 4 : mise en place",ctx:"Écuyers cotillons",attr:`data-bo="gen:cot34"`});
+ [["open","Ouverture du High"],["close","Fermeture du High"],["rdv","Lieu de rendez-vous"],["brief","Brief + test radio"]].forEach(([k,l])=>{if(S.info[k]===TBV)out.push({g:"Général",label:l,ctx:"Tous · Ma soirée",attr:`data-inp="${k}"`});});
+ Object.keys(GRPN).forEach(k=>{if(S.info.arr[k]===TBV)out.push({g:"Général",label:`Arrivée · ${GRPN[k]}`,ctx:`${GRPN[k]} · Ma soirée`,attr:`data-inp="arr.${k}"`});});
+ return out;}
+function boValider(){
+ const it=tbvItems();
+ if(!it.length)return `<div class="card">✅ Rien à valider.</div>`;
+ const gr={};it.forEach(x=>(gr[x.g]=gr[x.g]||[]).push(x));
+ return `<p style="color:var(--mut);font-size:13px"><b class="tbv">${it.length}</b> éléments à valider. Chaque ligne indique qui voit l'information et à quelle phase, pour t'aider à décider. Remplis : la ligne disparaît.</p>`+Object.keys(gr).map(g=>`<details ${g==="Général"?"open":""}><summary>${g} · ${gr[g].length}</summary>${gr[g].map(x=>`<div class="row" style="display:block"><b>${x.label}</b><div style="color:var(--mut);font-size:12px;margin:2px 0 4px">${x.ctx}</div>${x.area?`<textarea ${x.attr} placeholder="${TBV}"></textarea>`:`<input class="inp" ${x.num?'type="number" min="0"':""} ${x.attr} value="" placeholder="${TBV}">`}</div>`).join("")}</details>`).join("");
+}
+function checks(){
+ const out=[],E=m=>out.push(["err",m]),W=m=>out.push(["warn",m]);let prev=-1;
+ T.forEach(t=>{const n=t.n,P=`Tableau ${n}`;
+  const h=parseH(t.h);if(h===null)E(`${P} : heure invalide (${t.h}).`);else{if(h<=prev)E(`${P} : l'heure ${t.h} n'est pas après le tableau précédent.`);prev=h;}
+  const ps=t.pos.map(p=>p.p);if(ps.some((p,i)=>p!==i+1))E(`${P} : les podiums ne sont pas numérotés de 1 à ${ps.length}.`);
+  if(t.pos.length<4)E(`${P} : moins de 4 podiums.`);
+  const names=t.pos.flatMap(p=>p.a),dup=names.filter((x,i)=>names.indexOf(x)!==i);if(dup.length)E(`${P} : artiste en double (${[...new Set(dup)].join(", ")}).`);
+  t.pos.forEach(p=>{if(!p.a.length)E(`${P}, podium ${p.p} : aucun artiste.`);if(!String(p.c||"").trim())W(`${P}, podium ${p.p} : costume vide.`);});
+  const sl=slots(n),who=sl.map(s=>ga(n,s));
+  const dsq=who.filter((x,i)=>who.indexOf(x)!==i);if(dsq.length)E(`${P} : écuyer affecté deux fois (${[...new Set(dsq)].join(", ")}).`);
+  who.forEach((x,i)=>{if(!SQ.includes(x))E(`${P} : « ${x} » n'est pas un écuyer (${slotLabel(sl[i])}).`);});
+  const mis=SQ.filter(x=>!who.includes(x));if(mis.length)W(`${P} : écuyer sans mission (${mis.join(", ")}).`);
+  const cr=carry(n);[1,2,3,4,5].forEach(p=>{const q=t.pos.find(x=>x.p===p);if(q&&q.b[0]>0&&!Object.values(cr).some(a=>a.some(x=>x.pod===p)))E(`${P}, podium ${p} : cotillons sans écuyer porteur.`);});
+  const tot=t.pos.reduce((a,p)=>a+p.b[0],0),pl=(POOL[n]||[]).reduce((a,x)=>a+x[1],0);if(POOL[n]&&tot!==pl)W(`${P} : ${tot} cotillons pour une répartition de tailles prévue pour ${pl}.`);
+  if(!t.dj.length)E(`${P} : aucun DJ.`);
+  t.dj.forEach(d=>{if(!DJS.includes(d))E(`${P} : DJ « ${d} » inconnu.`);});
+ });
+ const tot={argent:0,rose:0,rainbow:0};T.forEach(t=>t.pos.forEach(p=>{tot[p.b[1]]=(tot[p.b[1]]||0)+p.b[0];}));
+ Object.keys(tot).forEach(k=>{const st=(STOCK[k]||[]).reduce((a,x)=>a+x[1],0);if(tot[k]>st)E(`Stock de cotillons ${k} insuffisant : besoin ${tot[k]}, stock ${st}.`);});
+ ROLES.flatMap(g=>g[1]).forEach(r=>T.forEach(t=>{try{const c=ctx(r,t);if(!c.off)relSteps(c).forEach(k=>{if(/undefined|NaN|\[object/.test(String(c.st[k].d)))E(`${roleLabel(r)} · T${t.n} · ${stT(k)} : texte invalide.`);});}catch(e){E(`${roleLabel(r)} · T${t.n} : erreur (${e.message}).`);}}));
+ T.forEach(t=>{const seen={};MEDIA.forEach(m=>{const a=String((t.place||{})[m]||"").trim().toLowerCase();if(!a||a===TBV.toLowerCase())return;(seen[a]=seen[a]||[]).push(m);});Object.keys(seen).forEach(a=>{if(seen[a].length>1)W(`Tableau ${t.n} : même angle « ${a} » pour ${seen[a].join(" et ")}.`);});});
+ const nt=tbvItems().length;if(nt)W(`${nt} éléments restent à valider.`);
+ return out;}
+function boControles(){
+ const L=checks(),er=L.filter(x=>x[0]==="err"),wa=L.filter(x=>x[0]==="warn");
+ return `<p style="color:var(--mut);font-size:13px">Vérification automatique des tableaux, des affectations, des cotillons et de chaque fiche individuelle. La publication est bloquée tant qu'il reste une erreur.</p>`+
+ (!L.length?`<div class="card">✅ Aucune incohérence.</div>`:`${er.length?`<div class="card" style="border-color:var(--bad)"><b style="color:var(--bad)">${er.length} erreur${er.length>1?"s":""}</b>${er.map(x=>`<div class="row" style="display:block">${x[1]}</div>`).join("")}</div>`:`<div class="card">✅ Aucune erreur.</div>`}${wa.length?`<div class="card"><b>${wa.length} alerte${wa.length>1?"s":""}</b>${wa.map(x=>`<div class="row" style="display:block">${x[1]}</div>`).join("")}</div>`:""}`)+
+ (er.length&&EDITOR?`<button class="big ghost" data-a="forcepub">Publier malgré les erreurs</button>`:"");
+}
+function boGen0(){
+ const t1=tb(1),st='style="width:90px;font:inherit;background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px"';
+ return `<p style="color:var(--mut);font-size:13px">Repères d'heure : minutes avant le lancement du tableau. Indicatif : Wess fait avancer en direct. Pour un tableau particulier, voir Tableaux › repères.</p>`+REPG.map(([g,l])=>{const m=repMin(g,t1);return `<div class="row"><span>${l}<br><span style="color:var(--mut);font-size:12px">${m===undefined?TBV:"tableau 1 → "+repOf(g,t1)}</span></span><input type="number" min="0" data-bo="rep:${g}" value="${m===undefined?"":m}" placeholder="min" ${st}></div>`;}).join("")+
+ `<div class="card"><b>Goodies</b><input class="inp" data-bo="gen:goodies" value="${esc((S.gen&&S.gen.goodies)||"")}" placeholder="${TBV}"><b>Cotillons podiums 3 et 4 : mise en place</b><input class="inp" data-bo="gen:cot34" value="${esc((S.gen&&S.gen.cot34)||"")}" placeholder="${TBV}"></div>`;
+}
+
+const TILESUB={tuto:"Comment utiliser l'appli",show:"Le déroulé du tableau",avant:"Infos, rôle, mots du talkie",rec:"Tous les postes d'un coup d'œil",tab:"Données des tableaux",esc:"Affectations des écuyers",cot:"Qui porte quoi",rad:"Appels et test radio",bo:"Modifier et publier",set:"Version et infos"};
+function menuItems(){
+ const et=eff().type,L=[["home","🏠","Accueil"],["show","🎬","Tableau"],["avant","🗓","Soirée"]];
+ if(["orga","dj","regie"].includes(et))L.push(["rec","🗂","Récap"]);
+ if(et==="orga")L.push(["tab","📋","Fiches"],["esc","🐴","Écuyers"],["cot","🎉","Cotillons"],["rad","📻","Radio"]);else if(et==="squire")L.push(["cot","🎉","Cotillons"]);
+ if(canView(S.role))L.push(["bo","🛠","Back office"]);
+ L.push(["tuto","❓","Tuto"],["set","⚙","Réglages"]);return L;}
+function drawer(){
+ return `<div class="scrim${S.menu?" open":""}" data-a="menu"></div><aside class="drawer${S.menu?" open":""}"><div class="dh"><b>Menu</b><button class="chip" data-a="menu">✕</button></div>${menuItems().map(x=>`<button class="mi${S.tab===x[0]?" on":""}" data-a="${x[0]==="tuto"?"tutoopen":"tab:"+x[0]}"><span>${x[1]}</span>${x[2]}</button>`).join("")}<button class="mi out" data-a="chrole"><span>🔒</span>Se déconnecter</button></aside>`;}
+function vHome(){
+ const r=eff();let nextN=0;for(let i=1;i<=T.length;i++)if(!prog(i).d){nextN=i;break;}
+ const t=nextN?tb(nextN):null,c=t?ctx(r,t):null,rg=repGroup(r.type);
+ let h=`<div class="homehd"><div><div style="color:var(--mut);font-size:13px">Bonjour</div><h2 style="margin:0">${esc(r.name)}</h2><div style="color:var(--mut)">${esc(roleLabel(r).split(" · ")[0])}</div></div><div class="vtag">${S.pubV?`version ${S.pubV}`:"hors ligne"}</div></div>`;
+ if(t){
+  const mine=c.off?"Tu n'es pas dans ce tableau.":(r.type==="orga"?"Tu pilotes au talkie.":(c.watch[0]||""));
+  h+=`<button class="card next tile-n" data-a="pick:${t.n}"><div style="color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.08em">${prog(1).d||nextN>1?"Prochain tableau":"Premier tableau"}</div><div style="font-size:22px;font-weight:800;margin:2px 0">Tableau ${t.n} · ${t.h}</div><div>${t.da}</div><div style="margin-top:8px;color:var(--mut)">Ton repère : <b style="color:var(--tx)">${repOf(rg,t)}</b></div>${mine?`<div style="margin-top:6px">${mine}</div>`:""}<div style="margin-top:10px;font-weight:700">Voir le déroulé →</div></button>`;
+ }else h+=`<div class="card">🎉 Tous les tableaux sont terminés. Bravo à l'équipe !</div>`;
+ h+=`<div class="dots">${T.map(x=>`<button class="dot${prog(x.n).d?" on":""}" data-a="pick:${x.n}">${prog(x.n).d?"✓":x.n}</button>`).join("")}</div>`;
+ h+=`<div class="tgrid">${menuItems().filter(x=>x[0]!=="home").map(x=>{let badge="";if(x[0]==="bo")badge=`${S.dirty?" · brouillon":""}${tbvItems().length?` · ${tbvItems().length} à valider`:""}`;return `<button class="tile" data-a="${x[0]==="show"&&t?"pick:"+t.n:(x[0]==="tuto"?"tutoopen":"tab:"+x[0])}"><span class="ti">${x[1]}</span><b>${x[2]}</b><small>${TILESUB[x[0]]||""}${badge}</small></button>`;}).join("")}</div>`;
+ h+=`<p class="foot">${esc(SYNC.msg||"")}${S.pubV?` Version ${verTxt()}.`:""}</p>`;
+ return h;}
+
+let DELC=null;
+const teamArr=g=>({sq:SQ,dj:DJS,photo:PHOTO,tiktok:TIKTOK,videast:VID})[g].slice();
+const TEAMG=[["sq","Écuyers"],["dj","DJ"],["photo","Photographes"],["tiktok","TikTok"],["videast","Vidéastes"]];
+const verTxt=()=>S.pubV?`v${S.pubV}${S.pubBy?` · ${S.pubBy}`:""}${S.pubT?` · ${new Date(S.pubT).toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}`:""}`:"aucune";
+const XG=[["*","Tous les postes"],["artist","Artistes"],["squire","Écuyers (tous)"],["squireC","Écuyers cotillons"],["squireG","Écuyers goodies"],["squireCG","Écuyers cotillons + goodies"],["squireE","Écuyers escorte"],["dj","DJ"],["regie","Régie"],["media","Médias"],["orga","Orga"]];
+const matchRk=(g,rk)=>g==="*"||(g==="squire"?rk.indexOf("squire")===0:g==="media"?["photo","tiktok","videast","team"].includes(rk):g===rk);
+const two=(key,msg,fn)=>{if(DELC===key){DELC=null;fn();}else{DELC=key;toast(msg);setTimeout(()=>{if(DELC===key)DELC=null;render();},4000);}};
+function boEquipe(){
+ return `<p style="color:var(--mut);font-size:13px">Ajoute ou supprime des personnes. Une nouvelle personne apparaît dans la connexion : génère son mot de passe dans Comptes, puis publie. Les artistes se gèrent dans Tableaux (podiums). Il faut 7 écuyers : 4 dégagement et 3 escorte.</p>`+TEAMG.map(([g,l])=>`<div class="card"><b>${l}</b>${teamArr(g).map(nm=>`<div class="row"><span>${nm}</span><button class="chip" data-a="delp:${g}:${nm}">${DELC===g+":"+nm?"Confirmer ?":"✕"}</button></div>`).join("")}<div class="row" style="border:0"><input class="inp" id="tm_${g}" placeholder="Nouveau nom" style="margin:0"><button class="chip" data-a="addp:${g}">+ Ajouter</button></div></div>`).join("");
+}
+function xlineBox(){
+ const L=S.xline||[];
+ const tabs=`<option value="*">Tous les tableaux</option>`+T.map(x=>`<option value="${x.n}">Tableau ${x.n}</option>`).join("");
+ const ph=ORD().map(k=>`<option value="${k}">${stI(k)} ${stT(k)}</option>`).join("");
+ return `<div class="card"><b>Ajouter une consigne</b><p style="color:var(--mut);font-size:13px;margin:4px 0">Ligne ajoutée à une phase, pour un poste, en plus du texte existant.</p><select id="xl_n">${tabs}</select> <select id="xl_k">${ph}</select> <select id="xl_g">${XG.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join("")}</select><input class="inp" id="xl_t" placeholder="Consigne"><button class="big ghost" data-a="addxl">+ Ajouter la consigne</button>${L.map((e,i)=>`<div class="row"><span style="font-size:13px">${e.n==="*"?"Tous":"T"+e.n} · ${stT(+e.k)} · ${(XG.find(x=>x[0]===e.g)||[0,e.g])[1]}<br><b>${esc(e.text)}</b></span><button class="chip" data-a="delxl:${i}">${DELC==="xl"+i?"Confirmer ?":"✕"}</button></div>`).join("")}</div>`;
+}
+function xcallBox(){
+ const L=S.xcall||[];
+ const tabs=`<option value="*">Tous les tableaux</option>`+T.map(x=>`<option value="${x.n}">Tableau ${x.n}</option>`).join("");
+ const ph=ORD().map(k=>`<option value="${k}">${stI(k)} ${stT(k)}</option>`).join("");
+ return `<div class="card"><b>Ajouter un appel</b><select id="xc_n">${tabs}</select> <select id="xc_k">${ph}</select> <select id="xc_y"><option>ATTENTION</option><option>TOP</option></select><input class="inp" id="xc_t" placeholder="Texte de l'appel"><input class="inp" id="xc_r" placeholder="Réponse attendue (facultatif)"><button class="big ghost" data-a="addxc">+ Ajouter l'appel</button>${L.map((e,i)=>`<div class="row"><span style="font-size:13px">${e.n==="*"?"Tous":"T"+e.n} · ${stT(+e.k)}<br><b>${e.type} ${esc(e.text)}</b>${e.reply?` ↩ ${esc(e.reply)}`:""}</span><button class="chip" data-a="delxc:${i}">${DELC==="xc"+i?"Confirmer ?":"✕"}</button></div>`).join("")}</div>`;
+}
+
+document.addEventListener("input",e=>{if(e.target&&e.target.id==="srch"){const q=e.target.value.trim().toLowerCase();document.querySelectorAll(".rb[data-nm]").forEach(b=>{b.style.display=(!q||b.dataset.nm.indexOf(q)>=0)?"":"none";});document.querySelectorAll(".grp").forEach(g=>{g.style.display=[...g.querySelectorAll(".rb")].some(b=>b.style.display!=="none")?"":"none";});}});
+function tutoSlides(r){
+ const ty=r.type,A=[
+ {ic:"🦄",t:"Bienvenue",b:["Cette appli est ta partition de la soirée.","Elle te montre, tableau par tableau, ce que tu fais et quand.","Wess fait avancer en direct au talkie : tu n'as pas besoin d'avoir ton téléphone dans la main."]},
+ {ic:"🎬",t:"Lire un tableau",b:["Choisis un tableau avec les pastilles.","Ce qui te concerne est en lumière, le reste est grisé.","🔴 PRÊT : Wess attend ta réponse au talkie.","« Pour moi » ne garde que tes phases."]},
+ {ic:"📻",t:"Les mots de Wess",b:["À TOUS : tout le monde.","ATTENTION : prépare-toi.","TOP : tu agis maintenant.","PRÊT ou EN POSITION : tu réponds au talkie."]}];
+ const Z={ic:"✅",t:"Un seul geste",b:["Appuie sur « Tableau terminé » pour passer au suivant.","Une fois connecté, tout reste sur ton téléphone : pas besoin d'internet.","Mise à jour : déconnecte-toi puis reconnecte-toi, en ligne.","Mot de passe oublié : demande à Wess, Jeff ou Nico."]};
+ let R=[];
+ if(ty==="squire")R=[{ic:"🐴",t:"Ton rôle d'écuyer",b:["Dégagement des podiums du bas : dans chaque binôme, un écuyer porte les cotillons, l'autre les goodies.","Escorte : tu amènes les artistes à leur podium. Tu réponds « ESCORTE x PRÊTE », puis « PODIUM x EN POSITION » quand ta licorne est sur le podium.","Ta mission change à chaque tableau : regarde ton accueil."]}];
+ else if(ty==="artist")R=[{ic:"🎭",t:"Ton rôle d'artiste",b:["Sois en zone de départ à ton repère, prêt : costume, masque, maquillage.","Un écuyer t'escorte jusqu'au podium. En hauteur, tu montes sur le podium non éclairé. Au sol, tu attends devant.","Au lancement, ton podium s'éclaire. À la fin, l'écuyer t'aide à descendre.","Tu n'as rien à valider."]}];
+ else if(ty==="dj")R=[{ic:"🎧",t:"Ton rôle de DJ",b:["Au DÉBUT DE TRANSITION, tu lances l'ambiance.","PRÊT : tu réponds « DJ PRÊT » en premier.","Transition musicale quand les artistes arrivent, puis lancement de ton titre au TOP.","Les titres de l'orga sont affichés en rouge tant qu'ils sont à valider."]}];
+ else if(ty==="regie")R=[{ic:"💡",t:"Ton rôle de régie",b:["Au DÉBUT DE TRANSITION, tu lances l'ambiance lumière.","PRÊT : tu réponds « RÉGIE PRÊT » en deuxième.","Podiums 3 et 4 non éclairés pendant la montée des artistes.","Au TOP lancement : transition de lumière, puis lumière et écran du tableau."]}];
+ else if(["photo","tiktok","videast","team"].includes(ty))R=[{ic:"📸",t:"Ton rôle médias",b:["Pour chaque tableau : une cible à couvrir et un angle précis.","Jamais deux personnes au même angle.","Prends ton angle pendant le dégagement des podiums.","Pour le reste, tu es libre."]}];
+ else if(ty==="orga"){
+  if(canView(r))R=[{ic:"🎼",t:"Chef d'orchestre",b:["Ton écran liste tes appels : ATTENTION puis TOP, avec les noms.","Coche les PRÊT et les « en position » reçus.","Touche une phase pour la marquer en cours.","Récap : tous les postes d'un coup d'œil, tableau par tableau."]},{ic:"🛠",t:"Back office",b:["À valider : tout ce qui manque, en rouge, avec qui voit quoi.","Contrôles : les incohérences bloquent la publication.","Publier : les autres reçoivent la mise à jour en se déconnectant puis en se reconnectant.","Comptes : mots de passe temporaires, que chacun remplace par le sien.","Voir en tant que : réservé à Wess, Jeff et Nico."]}];
+  else R=[{ic:"🧭",t:"Ton rôle d'orga",b:["Ta mission est à valider par Wess.","Tu suis le déroulé et tu reçois les appels comme tout le monde.","Récap : tous les postes d'un coup d'œil."]}];
+ }
+ return [...A,...R,Z];
+}
+function vTuto(){
+ const r=eff(),sl=tutoSlides(r),i=Math.max(0,Math.min(S.tutoI||0,sl.length-1)),x=sl[i],last=i===sl.length-1;
+ return `<div class="tuto"><div class="tdots">${sl.map((_,j)=>`<span class="td${j===i?" on":""}"></span>`).join("")}</div><div class="tic">${x.ic}</div><h2>${x.t}</h2><ul>${x.b.map(y=>`<li>${y}</li>`).join("")}</ul><div class="tnav">${i>0?`<button class="big ghost" data-a="tutoprev" style="width:70px;flex:0 0 auto">←</button>`:""}<button class="big ${last?"go":""}" data-a="${last?"tutoskip":"tutonext"}">${last?"C'est parti":"Suivant"}</button></div>${last?"":`<button class="chip" data-a="tutoskip" style="margin:12px auto 0;display:block">Passer</button>`}<p class="foot">${esc(roleLabel(r).split(" · ")[0])} · ${i+1}/${sl.length}</p></div>`;}
+function vNewPw(){
+ return `<div class="hero"><div class="hl">🔐</div><h1 style="font-size:24px">Choisis ton mot de passe</h1><p>Tu as utilisé un mot de passe temporaire. Choisis le tien pour ce téléphone.</p></div><input id="np1" type="password" autocomplete="off" placeholder="Nouveau mot de passe (4 caractères min.)" class="inp"><input id="np2" type="password" autocomplete="off" placeholder="Confirmer le mot de passe" class="inp">${S.npErr?`<div class="warn" style="margin:8px 0">${S.npErr}</div>`:""}<button class="big go" data-a="savepw">Enregistrer</button><button class="big ghost" data-a="skippw">Plus tard</button><p class="foot">Sur un autre téléphone, tu utiliseras le mot de passe temporaire tant qu'il n'a pas été changé. Tu pourras changer le tien dans Réglages.</p>`;}
+const needOwn=k=>{const u=S.users[k],v=(u&&u.v)||0,o=S.own[k];return !(o&&o.at>=v)&&S.skip[k]!==v;};
+
+function boGen(){return boGen0()+pubCfgBox();}
+const WEB=!window.claude&&/^https?:$/.test(location.protocol);
+/* ============ MODE WEB (GitHub Pages) : mise à jour automatique en ligne, copie locale hors ligne ============ */
+const GHK="bdl-gh";
+const ghRead=()=>{try{return JSON.parse(localStorage.getItem(GHK)||"{}");}catch(e){return {};}};
+const getTok=()=>ghRead().tok||"";
+function ghInfo(){const s=ghRead();if(s.owner&&s.repo)return {owner:s.owner,repo:s.repo};
+ const m=/^([^.]+)\.github\.io$/.exec(location.hostname),p=location.pathname.split("/").filter(Boolean);
+ return {owner:m?m[1]:"",repo:m?(p[0]||m[1]+".github.io"):""};}
+const b64=s=>btoa(unescape(encodeURIComponent(s)));
+async function ghApi(method,body){
+ const g=ghInfo(),t=getTok();if(!t||!g.owner||!g.repo)throw new Error("jeton ou dépôt manquant");
+ const r=await fetch(`https://api.github.com/repos/${g.owner}/${g.repo}/contents/config.json`,{method,headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
+ return r;}
+async function ghPublish(x){
+ const g=await ghApi("GET");let sha;
+ if(g.status===200){sha=(await g.json()).sha;}else if(g.status!==404){throw new Error(g.status===401||g.status===403?"jeton refusé (droits Contents : Read and write ?)":"GitHub "+g.status);}
+ const p=await ghApi("PUT",{message:`Publication v${x.v}`,content:b64(JSON.stringify(x)),sha});
+ if(!p.ok)throw new Error(p.status===409?"conflit, réessaie":p.status===401||p.status===403?"jeton refusé":"GitHub "+p.status);
+}
+function webDb(){
+ return {doc:p=>({
+  get:async()=>{
+   if(p==="bal/config"){const r=await fetch("config.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return {exists:false,data:()=>undefined};const d=await r.json();return {exists:true,data:()=>d};}
+   if(p==="secret/pw")return {exists:true,data:()=>({pw:JSON.stringify(S.pwPlain||{})})};
+   return {exists:false,data:()=>undefined};},
+  set:async x=>{if(p==="bal/config")await ghPublish(x);}
+ })};}
+function pubCfgBox(){
+ if(!WEB)return "";
+ const g=ghInfo(),has=!!getTok();
+ return `<div class="card"><b>Publication des mises à jour</b><p style="color:var(--mut);font-size:13px;margin:4px 0">Le jeton GitHub permet de publier. Il reste sur ce téléphone, il n'est jamais publié.</p><input class="inp" id="gh_o" placeholder="Compte GitHub" value="${esc(g.owner)}"><input class="inp" id="gh_r" placeholder="Nom du dépôt" value="${esc(g.repo)}"><input class="inp" id="gh_t" type="password" autocomplete="off" placeholder="${has?"Jeton enregistré (vide = le garder)":"Jeton GitHub"}"><button class="big ghost" data-a="ghsave">Enregistrer</button><button class="big ghost" data-a="ghtest">Tester la publication</button>${has?`<button class="big ghost" data-a="ghdel">Retirer le jeton</button>`:""}</div>`;}
+function firstOpen(){for(let i=1;i<=T.length;i++)if(!prog(i).d)return i;return T.length;}
+document.addEventListener("change",e=>{
+ const el=e.target;
+ if(el.dataset.bo){boChange(el);return;}
+ if(el.dataset.sel==="view"){if(el.value){const [ty,nm]=el.value.split("|");S.view={type:ty,name:nm};}else S.view=null;S.cur=firstOpen();render();return;}
+ if(el.dataset.sel){S.dirty=true;const [k,...r]=el.dataset.sel.split(":");if(k==="ten")S.tenue[r[0]]=el.value;else{S.asg[r[0]]=S.asg[r[0]]||{};slots(+r[0]).forEach(s=>{if(!S.asg[r[0]][s])S.asg[r[0]][s]=ga(+r[0],s)});S.asg[r[0]][r[1]]=el.value;}render();}
+ if(el.dataset.inp){S.dirty=true;const k=el.dataset.inp.split(".");if(k.length>1)S.info[k[0]][k[1]]=el.value.trim()||TBC;else S.info[k[0]]=el.value.trim()||TBC;render();}
+ if(el.dataset.chk){const [k,...r]=el.dataset.chk.split(":"),id=r.join(":");if(k==="ok"){S.ok[r[0]]=S.ok[r[0]]||{};S.ok[r[0]][r[1]]=el.checked;render();return;}S[k==="cot"?"cot":k==="rad"?"radio":"ros"][id]=el.checked;save();}
+});
+render();
+initCaps().then(()=>{READY=true;if(isUnl())syncConfig(false).then(()=>render());else render();});
+if(WEB&&"serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
